@@ -2,34 +2,43 @@
 
 import socketserver
 import json
+from collections import deque
+import uuid
 
 class QueueData(object):
     """docstring for QueueData"""
-    def __init__(self, arg):
-        self.arg = arg
+    def __init__(self):
+        self.HPque = deque()
+        self.SPque = deque()
+        self.LPque = deque()
 
-    def CreateDB():
+    def pickleCurrentQueue(self, db):
         pass
 
-    def OpenDB():
+    def unPickleCurrentQueue(self, db):
         pass
 
-    def CloseDB():
+    def addJob(self, job, command, priority):
+        if priority == 1:
+            self.HPque.append([str(uuid.uuid4())[:8], job, command])
+        elif priority == 2:
+            self.SPque.append([str(uuid.uuid4())[:8], job, command])
+        elif priority == 3:
+            self.LPque.append([str(uuid.uuid4())[:8], job, command])
+        else:
+            print('Bad Priority, job dropped')
+            return -1
+
+    def getJobInfo(self, jobID):
         pass
 
-    def addJob(job, command, priority):
+    def getAllJobs(self):
         pass
 
-    def getJobInfo(jobID):
+    def removeJob(self, jobID):
         pass
 
-    def getAllJobs():
-        pass
-
-    def removeJob(jobID):
-        pass
-
-    def modJob(jobID, job, command, priority):
+    def modJob(self, jobID, job, command, priority, complete):
         pass
 
 class TcpHandler(socketserver.BaseRequestHandler):
@@ -48,7 +57,7 @@ class TcpHandler(socketserver.BaseRequestHandler):
         self.close()
 
 if __name__ == "__main__":
-    try:
+    '''try:
         HOST, PORT = "localhost", 9999
 
         # Create the server, binding to localhost on port 9999
@@ -58,6 +67,12 @@ if __name__ == "__main__":
         # interrupt the program with Ctrl-C
         server.serve_forever()
     except KeyboardInterrupt:
-        server.shutdown()
+        server.shutdown()'''
 
-    pass
+Q = QueueData()
+Q.addJob('HPtest', 'bash', 1)
+Q.addJob('SPtest', 'bash', 2)
+Q.addJob('LPtest', 'bash', 3)
+print('HP', Q.HPque)
+print('SP', Q.SPque)
+print('LP', Q.LPque)
