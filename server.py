@@ -12,7 +12,7 @@ class QueueData(object):
         self.HPque = deque()
         self.SPque = deque()
         self.LPque = deque()
-        self.ques = [self.HPque, self.SPque, self.LPque]
+        #self.ques = [self.HPque, self.SPque, self.LPque] #used for planned optimization
 
     def pickleCurrentQueue(self, db):
         pass
@@ -32,7 +32,7 @@ class QueueData(object):
             return -1
 
     def getJobInfo(self, jobID):
-        '''for item in self.HPque:
+        for item in self.HPque:
             if item[0] == jobID:
                 return item
             else:
@@ -48,13 +48,15 @@ class QueueData(object):
             else:
                 pass
         else:
-            return -1'''
-        for item in self.ques:
+            return -1
+
+
+        '''for item in self.ques:            #planed optimization
             for item in item[0]:
                 if item[0] == jobID:
                     return item
             else:
-                return -1
+                return -1'''
 
     def getAllJobs(self):
         jobs = []
