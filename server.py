@@ -5,12 +5,14 @@ import json
 from collections import deque
 import uuid
 
+
 class QueueData(object):
     """docstring for QueueData"""
     def __init__(self):
         self.HPque = deque()
         self.SPque = deque()
         self.LPque = deque()
+        self.ques = [self.HPque, self.SPque, self.LPque]
 
     def pickleCurrentQueue(self, db):
         pass
@@ -18,22 +20,47 @@ class QueueData(object):
     def unPickleCurrentQueue(self, db):
         pass
 
-    def addJob(self, job, command, priority):
+    def addJob(self, jobName, command, priority):
         if priority == 1:
-            self.HPque.append([str(uuid.uuid4())[:8], job, command])
+            self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
         elif priority == 2:
-            self.SPque.append([str(uuid.uuid4())[:8], job, command])
+            self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
         elif priority == 3:
-            self.LPque.append([str(uuid.uuid4())[:8], job, command])
+            self.LPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
         else:
             print('Bad Priority, job dropped')
             return -1
 
     def getJobInfo(self, jobID):
-        pass
+        '''for item in self.HPque:
+            if item[0] == jobID:
+                return item
+            else:
+                pass
+        for item in self.SPque:
+                if item[0] == jobID:
+                    return item
+                else:
+                    pass
+        for item in self.LPque:
+            if item[0] == jobID:
+                return item
+            else:
+                pass
+        else:
+            return -1'''
+        for item in self.ques:
+            for item in item[0]:
+                if item[0] == jobID:
+                    return item
+            else:
+                return -1
 
     def getAllJobs(self):
-        pass
+        jobs = []
+        for items in self.HPque:
+            pass
+
 
     def removeJob(self, jobID):
         pass
@@ -69,10 +96,11 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         server.shutdown()'''
 
-Q = QueueData()
-Q.addJob('HPtest', 'bash', 1)
-Q.addJob('SPtest', 'bash', 2)
-Q.addJob('LPtest', 'bash', 3)
-print('HP', Q.HPque)
-print('SP', Q.SPque)
-print('LP', Q.LPque)
+    Q = QueueData()
+    Q.addJob('HPtest', 'bash', 1)
+    Q.addJob('SPtest', 'bash', 2)
+    Q.addJob('LPtest', 'bash', 3)
+    print('HP', Q.HPque)
+    print('SP', Q.SPque)
+    print('LP', Q.LPque)
+    print('job info', Q.getJobInfo('asdf'))
