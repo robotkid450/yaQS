@@ -7,12 +7,13 @@ import uuid
 
 
 class QueueData(object):
-    """docstring for QueueData"""
+    """docstring for QueueData
+       This is a basic multi-priority job queueing system."""
+
     def __init__(self):
-        self.HPque = deque()
+        self.HPque = deque()    #Creates high priority que
         self.SPque = deque()
         self.LPque = deque()
-        #self.ques = [self.HPque, self.SPque, self.LPque] #used for planned optimization
 
     def pickleCurrentQueue(self, db):
         pass
@@ -20,7 +21,8 @@ class QueueData(object):
     def unPickleCurrentQueue(self, db):
         pass
 
-    def addJob(self, jobName, command, priority):
+    def addJob(self, jobName, command, priority):   #adds a job to specified que
+
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
         elif priority == 2:
@@ -31,7 +33,7 @@ class QueueData(object):
             print('Bad Priority, job dropped')
             return -1
 
-    def getJobInfo(self, jobID):
+    def getJobInfo(self, jobID):    # Retrives a jobs info
         for item in self.HPque:
             if item[0] == jobID:
                 return item
@@ -50,24 +52,52 @@ class QueueData(object):
         else:
             return -1
 
+    def getAllJobs(self):   #Gets all job names + IDs
 
-        '''for item in self.ques:            #planed optimization
-            for item in item[0]:
-                if item[0] == jobID:
-                    return item
+        jobsHP = [] #High priority jobs
+        jobsSP = [] #standard priority jobs
+        jobsLP = [] #Low priority jobs
+
+        for item in self.HPque:                 #These loop through ques
+            jobsHP.append([item[0], item[1]])   #and extract the job name
+                                                #plus the jobs ID
+        for item in self.SPque:
+            jobsSP.append([item[0], item[1]])
+
+        for item in self.LPque:
+            jobsLP.append([item[0], item[1]])
+
+        return jobsHP, jobsSP, jobsLP
+
+    def removeJob(self, jobID): #Removes jobs from que
+        for item in self.HPque:
+            if item[0] == jobID:
+                print(item)
+                self.HPque.remove(item)
+                break
             else:
-                return -1'''
+                pass
 
-    def getAllJobs(self):
-        jobs = []
-        for items in self.HPque:
-            pass
+        for item in self.SPque:
+            if item[0] == jobID:
+                self.SPque.remove(item)
+                break
+            else:
+                pass
 
+        for item in self.LPque:
+            if item[0] == jobID:
+                self.LPque.remove(item)
+                break
+            else:
+                pass
 
-    def removeJob(self, jobID):
-        pass
+        else:
+            return -1
 
-    def modJob(self, jobID, job, command, priority, complete):
+        return 0
+
+    def modJob(self, jobID, job, command, priority):
         pass
 
 class TcpHandler(socketserver.BaseRequestHandler):
@@ -85,7 +115,7 @@ class TcpHandler(socketserver.BaseRequestHandler):
         self.request.send(self.data)
         self.close()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  #temporary testing code
     '''try:
         HOST, PORT = "localhost", 9999
 
@@ -98,11 +128,13 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         server.shutdown()'''
 
-    Q = QueueData()
-    Q.addJob('HPtest', 'bash', 1)
-    Q.addJob('SPtest', 'bash', 2)
-    Q.addJob('LPtest', 'bash', 3)
-    print('HP', Q.HPque)
-    print('SP', Q.SPque)
-    print('LP', Q.LPque)
-    print('job info', Q.getJobInfo('asdf'))
+    q = QueueData()
+    q.addJob('HPtest', 'bash', 1)
+    q.addJob('HPtest2', 'bash', 1)
+    q.addJob('SPtest', 'bash', 2)
+    q.addJob('SPtest2', 'bash', 2)
+    q.addJob('LPtest', 'bash', 3)
+    q.addJob('LPtest2', 'bash', 3)
+
+    a = q.getAllJobs()
+    print('jobs:', a)
