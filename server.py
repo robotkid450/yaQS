@@ -69,6 +69,7 @@ class QueueData(object):
 
         return jobsHP, jobsSP, jobsLP
 
+
     def removeJob(self, jobID): #Removes jobs from que
         for item in self.HPque:
             if item[0] == jobID:
@@ -97,6 +98,7 @@ class QueueData(object):
 
         return 0
 
+        
     def modJob(self, jobID, job, command, priority):
         pass
 
