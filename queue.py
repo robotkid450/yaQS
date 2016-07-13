@@ -12,21 +12,23 @@ class QueueData(object):
         self.LPque = deque()
 
     def pickleCurrentQueue(self, db):
-        pass
+        return 0
 
     def unPickleCurrentQueue(self, db):
-        pass
+        return 0
 
     def addJob(self, jobName, command, priority):   #adds a job to specified que
 
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            return 0
         elif priority == 2:
             self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            return 0
         elif priority == 3:
             self.LPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            return 0
         else:
-            print('Bad Priority, job dropped')
             return -1
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
@@ -65,14 +67,12 @@ class QueueData(object):
 
         return jobsHP, jobsSP, jobsLP
 
-
     def removeJob(self, jobID): #Removes jobs from que
 
         found = False
 
         for item in self.HPque:
             if item[0] == jobID:
-                print(item)
                 self.HPque.remove(item)
                 found = True
                 break
@@ -100,28 +100,9 @@ class QueueData(object):
         else:
             return 0
 
-
     def modJob(self, jobID, job, command, priority):
-        pass
+        return 0
 
 
 if __name__ == '__main__':
-    #temporary testing code
-        q = QueueData()
-        q.addJob('HPtest', 'bash', 1)
-        q.addJob('HPtest2', 'bash', 1)
-        q.addJob('SPtest', 'bash', 2)
-        q.addJob('SPtest2', 'bash', 2)
-        q.addJob('LPtest', 'bash', 3)
-        q.addJob('LPtest2', 'bash', 3)
-
-        a = q.getAllJobs()
-
-        print('a 0 0', a[0][0][0])
-        i = a[0][0][0]
-
-        b = q.removeJob(i)
-        print('b ', b)
-
-        n = q.getAllJobs()
-        print('jobs after removal', n)
+    q = QueueData()
