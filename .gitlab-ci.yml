@@ -1,5 +1,5 @@
 before_script:
-  #- dnf install -y python3
+  - apt-get install -y python3
   - which python3
 
 syntax_check:
