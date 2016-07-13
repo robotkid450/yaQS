@@ -71,10 +71,14 @@ class QueueData(object):
 
 
     def removeJob(self, jobID): #Removes jobs from que
+
+        found = False
+
         for item in self.HPque:
             if item[0] == jobID:
                 print(item)
                 self.HPque.remove(item)
+                found = True
                 break
             else:
                 pass
@@ -82,6 +86,7 @@ class QueueData(object):
         for item in self.SPque:
             if item[0] == jobID:
                 self.SPque.remove(item)
+                found = True
                 break
             else:
                 pass
@@ -89,16 +94,17 @@ class QueueData(object):
         for item in self.LPque:
             if item[0] == jobID:
                 self.LPque.remove(item)
+                found = True
                 break
             else:
                 pass
 
-        else:
+        if not found:
             return -1
+        else:
+            return 0
 
-        return 0
 
-        
     def modJob(self, jobID, job, command, priority):
         pass
 
@@ -117,7 +123,8 @@ class TcpHandler(socketserver.BaseRequestHandler):
         self.request.send(self.data)
         self.close()
 
-if __name__ == "__main__":  #temporary testing code
+if __name__ == "__main__":
+    #production code
     '''try:
         HOST, PORT = "localhost", 9999
 
@@ -130,6 +137,7 @@ if __name__ == "__main__":  #temporary testing code
     except KeyboardInterrupt:
         server.shutdown()'''
 
+#temporary testing code
     q = QueueData()
     q.addJob('HPtest', 'bash', 1)
     q.addJob('HPtest2', 'bash', 1)
@@ -139,4 +147,13 @@ if __name__ == "__main__":  #temporary testing code
     q.addJob('LPtest2', 'bash', 3)
 
     a = q.getAllJobs()
-    print('jobs:', a)
+    #print('jobs:', a)
+
+    print('a 0 0', a[0][0][0])
+    i = a[0][0][0]
+
+    b = q.removeJob(i)
+    print('b ', b)
+
+    n = q.getAllJobs()
+    print('jobs after removal', n)
