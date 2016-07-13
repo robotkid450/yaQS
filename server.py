@@ -19,8 +19,7 @@ class TcpHandler(socketserver.BaseRequestHandler):
         self.close()
 
 if __name__ == "__main__":
-    #production code
-    '''try:
+    try:
         HOST, PORT = "localhost", 9999
 
         # Create the server, binding to localhost on port 9999
@@ -30,24 +29,4 @@ if __name__ == "__main__":
         # interrupt the program with Ctrl-C
         server.serve_forever()
     except KeyboardInterrupt:
-        server.shutdown()'''
-
-#temporary testing code
-    q = QueueData()
-    q.addJob('HPtest', 'bash', 1)
-    q.addJob('HPtest2', 'bash', 1)
-    q.addJob('SPtest', 'bash', 2)
-    q.addJob('SPtest2', 'bash', 2)
-    q.addJob('LPtest', 'bash', 3)
-    q.addJob('LPtest2', 'bash', 3)
-
-    a = q.getAllJobs()
-
-    print('a 0 0', a[0][0][0])
-    i = a[0][0][0]
-
-    b = q.removeJob(i)
-    print('b ', b)
-
-    n = q.getAllJobs()
-    print('jobs after removal', n)
+        server.shutdown()
