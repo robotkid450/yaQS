@@ -1,7 +1,6 @@
 from collections import deque
 import uuid
 
-
 class QueueData(object):
     """docstring for QueueData
        This is a basic multi-priority job queueing system."""
@@ -105,4 +104,5 @@ class QueueData(object):
 
 
 if __name__ == '__main__':
+    # test code
     q = QueueData()
