@@ -62,6 +62,13 @@ class TcpHandler(socketserver.BaseRequestHandler):
             self.job_Info = self.que.getJobInfo(self.job_ID)
             self.send_message(self.request, json.dumps(self.job_Info))
 
+        elif self.data == 'removeJob':
+            self.send_message(self.request, 'send ID')
+            self.job_ID = self.recv_message(self.request)
+            self.result = self.que.removeJob(self.job_ID)
+            if self.result != 0:
+                self.send_message(self.request, self.result)
+
         else:
             self.send_message(self.request, 'invalid command')
 
