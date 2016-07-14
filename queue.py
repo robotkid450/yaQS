@@ -10,17 +10,17 @@ class QueueData(object):
         self.SPque = deque()
         self.LPque = deque()
 
-    def pickleCurrentQueue(self, db):
+    def pickleCurrentQueue(self, db): # will be implemted later
         return 0
 
-    def unPickleCurrentQueue(self, db):
+    def unPickleCurrentQueue(self, db): # will be implemted later
         return 0
 
     def addJob(self, jobName, command, priority):   #adds a job to specified que
 
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
-            return 0
+            return 0  #- apt-get install -y python3
         elif priority == 2:
             self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
             return 0
@@ -99,7 +99,7 @@ class QueueData(object):
         else:
             return 0
 
-    def modJob(self, jobID, job, command, priority):
+    def modJob(self, jobID, job, command, priority): # will be implemted later
         return 0
 
 
