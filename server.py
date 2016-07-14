@@ -5,6 +5,12 @@ import json
 import sys
 import struct
 
+'''class MessageProtocol(object):
+    """docstring for MessageProtocol"""
+    def __init__(self, socket):
+        self.socket = socket'''
+
+
 class TcpHandler(socketserver.BaseRequestHandler):
 
     '''def handle(self):
@@ -14,6 +20,11 @@ class TcpHandler(socketserver.BaseRequestHandler):
         print(self.data)
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())'''
+    # The following functions define a binary protocol used to communicate
+    # between the server and its clients
+
+    # A message consists of a 4byte block containing the length of the message
+    # followed by the meassage contents
 
     def send_message(self, sock, msg):
         # Prefix each message with a 4-byte length (network byte order)
@@ -38,6 +49,8 @@ class TcpHandler(socketserver.BaseRequestHandler):
                 return None
             data += packet
         return data
+
+    # End protocal functions
 
     def setup(self):
         self.que = q
@@ -66,8 +79,7 @@ class TcpHandler(socketserver.BaseRequestHandler):
             self.send_message(self.request, 'send ID')
             self.job_ID = self.recv_message(self.request)
             self.result = self.que.removeJob(self.job_ID)
-            if self.result != 0:
-                self.send_message(self.request, self.result)
+            self.send_message(self.request, str(self.result))
 
         else:
             self.send_message(self.request, 'invalid command')

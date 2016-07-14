@@ -47,7 +47,7 @@ if cmd == 'a':
     print('done = ', done)
     s.close()
 
-if cmd == 'j':
+elif cmd == 'j':
     send_message(s, 'getAllJobs')
     jobs = json.loads(recv_message(s))
     print(jobs)
@@ -55,13 +55,13 @@ if cmd == 'j':
     print('done = ', done)
     s.close()
 
-if cmd == 'i':
+elif cmd == 'i':
     send_message(s, 'getJobInfo')
     data = recv_message(s)
     if data == 'send ID':
         send_message(s, sys.argv[3])
         job_Info = json.loads(recv_message(s))
-        if job_Info != -a:
+        if job_Info != -1:
             print('job info: ', job_Info)
             done = recv_message(s)
             print('done = ', done)
@@ -70,6 +70,24 @@ if cmd == 'i':
             print('bad id')
             s.close()
 
+elif cmd == 'r':
+    send_message(s, 'removeJob')
+    data = recv_message(s)
+    if data == 'send ID':
+        send_message(s, sys.argv[3])
+        result = recv_message(s)
+        if result != 0:
+            print('result: ', result)
+            done = recv_message(s)
+        else:
+            done = recv_message(s)
+            print('done = ', done)
+        s.close()
+
+
     else:
         print('error bad reply')
         s.close()
+else:
+    print('invalid command')
+    sys.exit(-1)
