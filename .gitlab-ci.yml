@@ -2,11 +2,11 @@ before_script:
   #- apt-get install -y python3
   - which python3
 
-syntax_check:
+queue_syntax_check:
   script:
     - python3 -m queue
 
 
-func_check:
+queue_func_check:
   script:
     - python3 que_test.py
