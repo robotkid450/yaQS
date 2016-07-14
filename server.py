@@ -27,14 +27,17 @@ class TcpHandler(socketserver.BaseRequestHandler):
             self.MP.send_message(json.dumps(self.all_jobs))
 
         elif self.data == 'getJobInfo':
+            print('job info request')
             self.MP.send_message('send ID')
             self.job_ID = self.MP.recv_message()
             self.job_Info = self.que.getJobInfo(self.job_ID)
             self.MP.send_message(json.dumps(self.job_Info))
 
         elif self.data == 'removeJob':
+            print('job remove request')
             self.MP.send_message('send ID')
             self.job_ID = self.MP.recv_message()
+            print('removing job:', self.job_ID)
             self.result = self.que.removeJob(self.job_ID)
             self.MP.send_message(str(self.result))
 
