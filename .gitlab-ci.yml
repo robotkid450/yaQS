@@ -10,3 +10,7 @@ queue_syntax_check:
 queue_func_check:
   script:
     - python3 que_test.py
+
+server_func_check:
+  script:
+    - echo 'test not built'
