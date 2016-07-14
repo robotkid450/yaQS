@@ -44,19 +44,31 @@ class TcpHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         self.data = self.recv_message(self.request)
-        print('self.data = ', self.data)
-        if self.data == 'addJob':
-            print('addJob')
+        if self.data == 'addJob': #adds jobs to queue
+            print('adding Job')
             self.send_message(self.request, 'send job')
-            self.job_to_add = self.recv_message(self.request)
-            self.job_to_add = json.loads(self.job_to_add)
-            print('job_to_add = ', self.job_to_add)
+            self.job_to_add = json.loads(self.recv_message(self.request))
+            self.que.addJob(self.job_to_add[0],self.job_to_add[1], self.job_to_add[2])
+            print('added job :', self.job_to_add[0])
 
-        self.send_message(self.request, 'done')
+        elif self.data == 'getAllJobs':
+            print('getting jobs')
+            self.all_jobs = self.que.getAllJobs()
+            self.send_message(self.request, json.dumps(self.all_jobs))
+
+        elif self.data == 'getJobInfo':
+            self.send_message(self.request, 'send ID')
+            self.job_ID = self.recv_message(self.request)
+            self.job_Info = self.que.getJobInfo(self.job_ID)
+            self.send_message(self.request, json.dumps(self.job_Info))
+
+        else:
+            self.send_message(self.request, 'invalid command')
+
 
     def finish(self):
         q = self.que
-
+        self.send_message(self.request, 'done')
 
 if __name__ == "__main__":
     try:

@@ -33,11 +33,43 @@ def recvall(sock, n):
 
 s = socket.socket()
 s.connect((host, port))
-send_message(s, 'addJob')
-data = recv_message(s)
-if data == 'send job':
-    msg_to_send = json.dumps(["HPtest", "bash", 1])
-    print(msg_to_send)
-    send_message(s, msg_to_send)
-data2 = recv_message(s)
-print(data2)
+
+cmd = sys.argv[2]
+
+if cmd == 'a':
+    send_message(s, 'addJob')
+    data = recv_message(s)
+    if data == 'send job':
+        msg_to_send = json.dumps(["HPtest", "bash", 1])
+        print(msg_to_send)
+        send_message(s, msg_to_send)
+    done = recv_message(s)
+    print('done = ', done)
+    s.close()
+
+if cmd == 'j':
+    send_message(s, 'getAllJobs')
+    jobs = json.loads(recv_message(s))
+    print(jobs)
+    done = recv_message(s)
+    print('done = ', done)
+    s.close()
+
+if cmd == 'i':
+    send_message(s, 'getJobInfo')
+    data = recv_message(s)
+    if data == 'send ID':
+        send_message(s, sys.argv[3])
+        job_Info = json.loads(recv_message(s))
+        if job_Info != -a:
+            print('job info: ', job_Info)
+            done = recv_message(s)
+            print('done = ', done)
+            s.close()
+        else:
+            print('bad id')
+            s.close()
+
+    else:
+        print('error bad reply')
+        s.close()
