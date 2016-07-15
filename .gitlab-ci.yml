@@ -1,7 +1,12 @@
 before_script:
-  #- apt-get install -y python3
   - which python3
 
+<<<<<<< HEAD
 server_func_check:
   script:
     - echo 'test not built'
+=======
+que_check:
+  script:
+    - python3 test_que.py
+>>>>>>> que_management
