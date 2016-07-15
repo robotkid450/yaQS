@@ -1,3 +1,6 @@
 before_script:
-  #- apt-get install -y python3
   - which python3
+
+protocol_check:
+  script:
+    - python3 -m MessageProtocol.py
