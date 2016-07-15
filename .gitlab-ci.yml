@@ -1,12 +1,14 @@
 before_script:
   - which python3
 
-<<<<<<< HEAD
 server_func_check:
   script:
     - echo 'test not built'
-=======
+
 que_check:
   script:
     - python3 test_que.py
->>>>>>> que_management
+
+protocol_check:
+  script:
+    - python3 -m MessageProtocol.py
