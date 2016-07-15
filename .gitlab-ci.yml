@@ -2,15 +2,6 @@ before_script:
   #- apt-get install -y python3
   - which python3
 
-queue_syntax_check:
-  script:
-    - python3 -m queue
-
-
-queue_func_check:
-  script:
-    - python3 que_test.py
-
 server_func_check:
   script:
     - echo 'test not built'
