@@ -13,6 +13,7 @@ print('retriving job')
 s.connect(host, port)
 MP.send_message('get job')
 job = recv_message()
+done1 = recv_message()
 s.close()
 if job != 'none':
     print('job recived: ', job)
