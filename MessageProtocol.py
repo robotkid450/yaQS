@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 import struct
 
 class Message(object):
@@ -50,4 +51,5 @@ class Message(object):
             data += packet
         return data
 
-        # End protocal functions
+if __name__ == '__main__':
+    pass
