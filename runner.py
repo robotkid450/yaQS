@@ -54,12 +54,12 @@ def submitCompletion(job_result, job):
         return -3
 
 if __name__ == '__main__':
-    job = getJob()
-    if job != '-1':
-        print('job recived: ', job)
-        job_run_result = runJob(job)
-        submitCompletion(job_run_result, job)
+    while True:
+        job = getJob()
+        if job != -1:
+            print('job recived: ', job)
+            job_run_result = runJob(job)
+            submitCompletion(job_run_result, job)
 
-    else:
-        print('no jobs avalible')
-        sys.exit(0)
+        else:
+            print('no jobs avalible')
