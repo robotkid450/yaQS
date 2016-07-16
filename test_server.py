@@ -31,7 +31,7 @@ def recvall(sock, n):
         data += packet
     return data
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host, port))
 
 cmd = sys.argv[2]
