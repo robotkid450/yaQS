@@ -7,7 +7,7 @@ import sys # temp import for defining port
 host, port = '127.0.0.1', int(sys.argv[1])
 
 def makeSocket():
-    sock = socket.socket()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     messenger = MessageProtocol.Message(sock)
     return sock, messenger
 
