@@ -1,43 +1,27 @@
 # UDP Message SPEC
+---
 
 ## UDP message format
-
-### First message:
-#### Layout
+### Layout
 ```python
-[message ID, number of packets, data]
+[message ID, number of packets, packet number, data]
 ```
 
-#### Description of items
+### Description of items
 | Item | Description | Ussage|
 |:------:|:-------------:|:-------:|
 | message ID | A unique identifier for each group of messages. | Allows the recipient to groups related messages|
 | number of packets | An integer containing the total number packets in the message.| Used be recipient to calculate missing messages.|
-| data | The payload of the Message.| Used to send and receive data.|
-
-
-### Following messages:
-
-#### Layout
-``` python
-[ message ID, Packet number, data ]
-```
-#### Description of items
-| Item | Description | Ussage|
-|:------:|:-------------:|:-------:|
-| message ID | A unique identifier for each group of messages. | Allows the recipient to groups related messages|
 | packet number | An integer containing the current message's number. | Used be recipient to calculate missing messages.|
 | data | The payload of the Message.| Used to send and receive data.|
 
-> NOTE: Follow-up messages only required for messages that are larger than the socket buffer.
 
-
-### NACK responce:
-#### Layout
+## NACK responce:
+### Layout
 ```python
 ('ACK',message ID, missing messages)
 ```
-#### Description of items
+### Description of items
 | Item | Description | Ussage|
 |:------:|:-------------:|:-------:|
 | ACK | String containing 'ACK'. | Signals sender the recipient has received a message or messages.|
