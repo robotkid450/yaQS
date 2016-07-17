@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 import socketserver
-import queue
+import yaqsQueue
 import json
 import sys
 import MessageProtocol
@@ -51,7 +51,7 @@ class TcpHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     try:
-        q = queue.QueueData()
+        q = yaqsQueue.QueueData()
 
         HOST, PORT = "localhost", int(sys.argv[1])
 
