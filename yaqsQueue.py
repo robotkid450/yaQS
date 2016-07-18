@@ -18,10 +18,9 @@ class QueueData(object):
         return 0
 
     def addJob(self, jobName, command, priority):   #adds a job to specified que
-
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
-            return 0  #- apt-get install -y python3
+            return 0
         elif priority == 2:
             self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
             return 0
@@ -64,8 +63,8 @@ class QueueData(object):
 
         for item in self.LPque:
             jobsLP.append([item[0], item[1]])
-
-        return jobsHP, jobsSP, jobsLP
+        jobs = [jobsHP, jobsSP, jobsLP]
+        return jobs
 
     def removeJob(self, jobID): #Removes jobs from que
 
