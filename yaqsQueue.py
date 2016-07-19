@@ -9,7 +9,7 @@ class QueueData(object):
         self.HPque = deque()    #Creates high priority que
         self.SPque = deque()    #Creates standard priority que
         self.LPque = deque()    #Creates low priority que
-        self.current = []
+        self.jobsAvailable = 0
 
     def pickleCurrentQueue(self, db): # will be implemted later
         return 0
@@ -20,12 +20,15 @@ class QueueData(object):
     def addJob(self, jobName, command, priority):   #adds a job to specified que
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.jobsAvailable += 1
             return 0
         elif priority == 2:
             self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.jobsAvailable += 1
             return 0
         elif priority == 3:
             self.LPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.jobsAvailable += 1
             return 0
         else:
             return -1
@@ -97,6 +100,7 @@ class QueueData(object):
         if not found:
             return -1
         else:
+            self.jobsAvailable -= 1
             return 0
 
     def modJob(self, jobID, job, command, priority): # will be implemted later
@@ -104,7 +108,7 @@ class QueueData(object):
 
     def getJobToRun(self):
         # retrives next job based on input order and priority or
-        # returns -1 if no jobs are avalible
+        # returns -1 if no jobs are available
         if len(self.HPque) != 0:
             job_to_run = self.HPque.pop()
 
@@ -116,9 +120,11 @@ class QueueData(object):
 
         else:
             return -1
-        self.current.append(job_to_run)
+        self.jobsAvailable -= 1
         return job_to_run
 
+    def getJobsAvailable():
+        return self.jobsAvailable
 
 if __name__ == '__main__':
     # test code
