@@ -1,4 +1,4 @@
-import queue
+import yaqsQueue
 from sys import exit
 
 q = queue.QueueData()  #create que obj
