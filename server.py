@@ -30,6 +30,17 @@ class UDPBroadcaster(object):
     def _stop(self):
         self.sock.close()
 
+def workDispatch():
+    if queue.getJobsAvailable() > 0:
+        UB = UDPBroadcaster()
+        UB.sendWorkAvailable()
+    return 0
+
+def discovery():
+    UB = UDPBroadcaster()
+    UB.sendDiscovery()
+    return 0
+
 
 class dataServerProtocol(asyncio.Protocol):
     """docstring for MessageProtocol"""
@@ -113,23 +124,12 @@ class PeriodicTask(object):
     def _stop(self):
         self._handler.cancel()
 
-def workDispatch():
-    if queue.getJobsAvailable() > 0:
-        UB = UDPBroadcaster()
-        UB.sendWorkAvailable()
-    return 0
-
-def discovery():
-    UB = UDPBroadcaster()
-    UB.sendDiscovery()
-    return 0
 
 if __name__ == '__main__':
-    #create storage queue
+    # Create storage queue
     queue = yaqsQueue.QueueData()
 
-    message = "Hello World!"
-
+    # Create asyncio loop
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
     dataServerCoroutine = loop.create_server(
