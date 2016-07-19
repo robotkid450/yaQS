@@ -8,7 +8,3 @@ server_func_check:
 que_check:
   script:
     - python3 test_que.py
-
-protocol_check:
-  script:
-    - python3 -m MessageProtocol.py
