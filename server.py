@@ -7,6 +7,14 @@ import json
 import sys
 import socket
 
+
+#SERVER_ADDR = ('0.0.0.0', 9998) # production
+SERVER_ADDR = ('localhost', 9998) # testing
+
+# BROADCAST_ADDR = ('255.255.255.255', 9999) # production
+BROADCAST_ADDR = ('localhost', 9999) # testing
+
+
 class UDPBroadcaster(object):
     """docstring for UDPBroadcaster"""
     def __init__(self):
@@ -14,16 +22,14 @@ class UDPBroadcaster(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        # self.broadcastADDR = ('255.255.255.255', 9999)
-        self.broadcastADDR = ('localhost', 9999)
 
     def sendDiscovery(self):
-        self.sock.sendto('discover'.encode(), self.broadcastADDR)
+        self.sock.sendto('discover'.encode(), BROADCAST_ADDR)
         print('sending discover')
         self._stop()
 
     def sendWorkAvailable(self):
-        self.sock.sendto('work Available'.encode(), self.broadcastADDR)
+        self.sock.sendto('work Available'.encode(), BROADCAST_ADDR)
         print('sending work avalible')
         self._stop()
 
@@ -137,7 +143,7 @@ if __name__ == '__main__':
     dataServer = loop.run_until_complete(dataServerCoroutine)
     dispatchServer = PeriodicTask(workDispatch, 5)
     discoverServer = PeriodicTask(discovery, 10)
-
+    discovery()
 
     # Serve requests until Ctrl+C is pressed
     print('Serving on {}'.format(dataServer.sockets[0].getsockname()))
