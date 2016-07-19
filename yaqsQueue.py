@@ -123,7 +123,7 @@ class QueueData(object):
         self.jobsAvailable -= 1
         return job_to_run
 
-    def getJobsAvailable():
+    def getJobsAvailable(self):
         return self.jobsAvailable
 
 if __name__ == '__main__':
