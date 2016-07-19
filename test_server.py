@@ -5,89 +5,57 @@ import json
 import struct
 
 host = 'localhost'
-port = int(sys.argv[1])
+port = 8888
 
-def send_message(sock, msg):
-    # Prefix each message with a 4-byte length (network byte order)
-    msg = struct.pack('>I', len(msg)) + msg.encode()
-    sock.sendall(msg)
+def send_message(sock, command, data=''):
+        data_to_encode = (command, data)
+        data_to_send = json.dumps(data_to_encode)
+        sock.send(data_to_send.encode())
 
 def recv_message(sock):
-    # Read message length and unpack it into an integer
-    raw_msglen = recvall(sock, 4)
-    if not raw_msglen:
-        return None
-    msglen = struct.unpack('>I', raw_msglen)[0]
-    # Read the message data
-    return recvall(sock, msglen).decode()
+    data_to_decode = sock.recv(1024).decode()
+    command, data = json.loads(data_to_decode)
+    return command, data
 
-def recvall(sock, n):
-    # Helper function to recv n bytes or return None if EOF is hit
-    data = b''
-    while len(data) < n:
-        packet = sock.recv(n - len(data))
-        if not packet:
-            return None
-        data += packet
-    return data
 
 s = socket.socket()
 s.connect((host, port))
 
-cmd = sys.argv[2]
+cmd = sys.argv[1]
 
 if cmd == 'a':
-    send_message(s, 'addJob')
-    data = recv_message(s)
-    if data == 'send job':
-        msg_to_send = json.dumps(["HPtest", "bash", 1])
-        print(msg_to_send)
-        send_message(s, msg_to_send)
-    done = recv_message(s)
-    print('done = ', done)
+    send_message(s, 'addJob', ["HPtest", "bash", 1])
+    command, result = recv_message(s)
+    print('result', result)
     s.close()
 
 elif cmd == 'j':
     send_message(s, 'getAllJobs')
-    jobs = json.loads(recv_message(s))
+    command, jobs = recv_message(s)
     print(jobs)
-    done = recv_message(s)
-    print('done = ', done)
     s.close()
 
 elif cmd == 'i':
-    send_message(s, 'getJobInfo')
-    data = recv_message(s)
-    if data == 'send ID':
-        send_message(s, sys.argv[3])
-        job_Info = json.loads(recv_message(s))
-        if job_Info != -1:
-            print('job info: ', job_Info)
-            done = recv_message(s)
-            print('done = ', done)
-            s.close()
-        else:
-            print('bad id')
-            s.close()
+    send_message(s, 'getJobInfo', str(sys.argv[2]))
+    command, job_Info = recv_message(s)
+    if job_Info != -1:
+        print(job_Info)
+    else:
+        print('bad ID')
+    s.close()
 
 elif cmd == 'r':
-    send_message(s, 'removeJob')
-    data = recv_message(s)
-    if data == 'send ID':
-        send_message(s, sys.argv[3])
-        result = recv_message(s)
-        if result != 0:
-            print('result: ', result)
-            done = recv_message(s)
-        else:
-            done = recv_message(s)
-            print('done = ', done)
-        s.close()
+    send_message(s, 'removeJob', str(sys.argv[2]))
+    command, result = recv_message(s)
+    if result != 0:
+        print('bad ID')
+    s.close()
+
+elif cmd == 'q':
+    send_message(s, 'shutdown')
 
 
-    else:
-        print('error bad reply')
-        s.close()
+
 else:
     print('invalid command')
     sys.exit(-1)
