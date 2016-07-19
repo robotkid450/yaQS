@@ -5,8 +5,30 @@ import asyncio
 import yaqsQueue
 import json
 import sys
-import struct
 import socket
+
+class UDPBroadcaster(object):
+    """docstring for UDPBroadcaster"""
+    def __init__(self):
+        # SOCK_DGRAM is the socket type to use for UDP sockets
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        # self.broadcastADDR = ('255.255.255.255', 9999)
+        self.broadcastADDR = ('localhost', 9999)
+
+    def sendDiscovery(self):
+        self.sock.sendto('discover'.encode(), self.broadcastADDR)
+        print('sending discover')
+        self._stop()
+
+    def sendWorkAvailable(self):
+        self.sock.sendto('work Available'.encode(), self.broadcastADDR)
+        print('sending work avalible')
+        self._stop()
+
+    def _stop(self):
+        self.sock.close()
 
 
 class dataServerProtocol(asyncio.Protocol):
@@ -59,7 +81,7 @@ class dataServerProtocol(asyncio.Protocol):
         self.transport.close()
 
     def connection_lost(self, exc):
-        print('con lost')
+        print('client disconnected')
         queue = self.que
 
 
@@ -85,7 +107,6 @@ class PeriodicTask(object):
         self._handler = self._loop.call_later(self.interval, self._run)
     def _run(self):
         funcOut = self.func()
-        # self.func()
         self._set()
         return funcOut
 
@@ -93,7 +114,14 @@ class PeriodicTask(object):
         self._handler.cancel()
 
 def workDispatch():
+    if queue.getJobsAvailable() > 0:
+        UB = UDPBroadcaster()
+        UB.sendWorkAvailable()
+    return 0
 
+def discovery():
+    UB = UDPBroadcaster()
+    UB.sendDiscovery()
     return 0
 
 if __name__ == '__main__':
@@ -104,9 +132,11 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
-    dataServerCoroutine = loop.create_server(dataServerProtocol, '127.0.0.1', 9998)
+    dataServerCoroutine = loop.create_server(
+        dataServerProtocol, '127.0.0.1', 9998)
     dataServer = loop.run_until_complete(dataServerCoroutine)
-    dispatchServer = PeriodicTask(workDispatch, 1)
+    dispatchServer = PeriodicTask(workDispatch, 5)
+    discoverServer = PeriodicTask(discovery, 10)
 
 
     # Serve requests until Ctrl+C is pressed
