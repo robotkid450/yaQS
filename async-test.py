@@ -6,9 +6,10 @@ import yaqsQueue
 import json
 import sys
 import struct
+import socket
 
 
-class MessenagerProtocal(asyncio.Protocol):
+class dataServerProtocol(asyncio.Protocol):
     """docstring for MessageProtocol"""
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -61,8 +62,6 @@ class MessenagerProtocal(asyncio.Protocol):
         print('con lost')
         queue = self.que
 
-    def quitter(self):
-        loop.stop()
 
     # helper functions
     def send_message(self, command='reply', data=''):
@@ -70,63 +69,55 @@ class MessenagerProtocal(asyncio.Protocol):
             data_to_send = json.dumps(data_to_encode)
             self.transport.write(data_to_send.encode())
 
-    # def send_message_bin(self, msg): # sends binary data !!MUST BE SERIALIZED!!
-    #     # Prefix each message with a 4-byte length (network byte order)
-    #     msg = struct.pack('>I', len(msg)) + msg
-    #     self.transport.write(msg)
-    #
-    # def recv_message_bin(self): # recives binary data !!MUST BE SERIALIZED!!
-    #     # Read message length and unpack it into an integer
-    #     raw_msglen = self.recvall(4)
-    #     if not raw_msglen:
-    #         return None
-    #     msglen = struct.unpack('>I', raw_msglen)[0]
-    #     # Read the message data
-    #     return self.recvall(msglen)
-    #
-    #
-    # def send_message(self, msg): # sends strings
-    #     # Prefix each message with a 4-byte length (network byte order)
-    #     msg = struct.pack('>I', len(msg)) + msg.encode()
-    #     self.transport.write(msg)
-    #
-    # def recv_message(self): # recives strings
-    #     # Read message length and unpack it into an integer
-    #     raw_msglen = self.recvall(4)
-    #     if not raw_msglen:
-    #         return None
-    #     msglen = struct.unpack('>I', raw_msglen)[0]
-    #     # Read the message data
-    #     return self.recvall(msglen).decode()
-    #
-    # def recvall(self, n):
-    #     # Helper function to recv n bytes or return None if EOF is hit
-    #     data = b''
-    #     while len(data) < n:
-    #         packet = self.transport.read(n - len(data))
-    #         if not packet:
-    #             return None
-    #         data += packet
-    #     return data
-    #
+    def quitter(self):
+        #used to remotly kill server
+        loop.stop()
+
+
+class PeriodicTask(object):
+    def __init__(self, func, interval):
+        self.func = func
+        print(func)
+        self.interval = interval
+        self._loop = asyncio.get_event_loop()
+        self._set()
+    def _set(self):
+        self._handler = self._loop.call_later(self.interval, self._run)
+    def _run(self):
+        funcOut = self.func()
+        # self.func()
+        self._set()
+        return funcOut
+
+    def _stop(self):
+        self._handler.cancel()
+
+def workDispatch():
+
+    return 0
 
 if __name__ == '__main__':
     #create storage queue
     queue = yaqsQueue.QueueData()
 
+    message = "Hello World!"
+
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
-    coro = loop.create_server(MessenagerProtocal, '127.0.0.1', 8888)
-    server = loop.run_until_complete(coro)
+    dataServerCoroutine = loop.create_server(dataServerProtocol, '127.0.0.1', 9998)
+    dataServer = loop.run_until_complete(dataServerCoroutine)
+    dispatchServer = PeriodicTask(workDispatch, 1)
+
 
     # Serve requests until Ctrl+C is pressed
-    print('Serving on {}'.format(server.sockets[0].getsockname()))
+    print('Serving on {}'.format(dataServer.sockets[0].getsockname()))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
         pass
 
     # Close the server
-    server.close()
-    loop.run_until_complete(server.wait_closed())
+    dataServer.close()
+    dispatchServer._stop()
+    loop.run_until_complete(dataServer.wait_closed())
     loop.close()
