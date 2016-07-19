@@ -5,7 +5,7 @@ import json
 import struct
 
 host = 'localhost'
-port = 8888
+port = 9998
 
 def send_message(sock, command, data=''):
         data_to_encode = (command, data)
