@@ -88,6 +88,7 @@ def callComms(sock, args):
     elif args.command == 'job-info' or args.command == 'info':
         command = 'getJobInfo'
         data = args.jobID
+        getJobInfo(sock, command, data)
     elif args.command == 'remove-job' or args.command == 'remove':
         command = 'removeJob'
         data = args.jobID
@@ -146,13 +147,29 @@ def getAllJobs(sock, command, data):
         print('---------------\n')
 
 def getJobInfo(sock, command, data):
-    pass
+    try:
+        sock.connect(SERVER_ADDR)
+        send_message(sock, command, data)
+    except BrokenPipeError:
+        print('ERROR: Broken Pipe, Check network connection')
+        return -1
+    # command, recv_data = recv_message(sock)
 
 def removeJob(sock, command, data):
-    pass
+    try:
+        sock.connect(SERVER_ADDR)
+        send_message(sock, command, data)
+    except BrokenPipeError:
+        print('ERROR: Broken Pipe, Check network connection')
+        return -1
 
 def shutdown(sock, command, data):
-    pass
+    try:
+        sock.connect(SERVER_ADDR)
+        send_message(sock, command, data)
+    except BrokenPipeError:
+        print('ERROR: Broken Pipe, Check network connection')
+        return -1
 
 if __name__ == '__main__':
     args = get_args()
