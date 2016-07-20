@@ -6,9 +6,8 @@ import argparse
 
 # Define needed global variables
 host = 'localhost'
-tcpPort = 9998
-udpPort = 9999
-
+port = 9998
+SERVER_ADDR = (host, port)
 # Define socket
 sock = socket.socket()
 
@@ -23,3 +22,129 @@ def recv_message(sock):
     command, data = json.loads(data_to_decode)
     return command, data
 # End helper function
+
+def get_args():
+    argParse = argparse.ArgumentParser(
+        description='Interface with yaQS server.'
+        )
+
+    commandsParsers = argParse.add_subparsers(help='commands', dest='command')
+
+    # addJob command
+    addJobParser = commandsParsers.add_parser(
+        'add-job', aliases=['add'], help='Add a job to queue.'
+        )
+    addJobParser.add_argument(
+        'name', action='store', help='The name of the job.'
+        )
+    addJobParser.add_argument(
+        'shellCommand', action='store', help='The command to be run'
+        )
+    addJobParser.add_argument(
+        'priority',type=int, action='store', help='The jobs priority.'
+        )
+
+    # getAllJobs command
+    getAllJobsParser = commandsParsers.add_parser(
+        'show-jobs', aliases=['jobs'], help='Show all jobs.'
+        )
+
+    # getJobInfo command
+    getJobInfoParser = commandsParsers.add_parser(
+        'job-info',  aliases=['info'], help='Get a jobs info.'
+        )
+    getJobInfoParser.add_argument(
+        'jobID', action='store', help='The ID of the desired job.'
+        )
+
+    # removeJob command
+    removeJobParser = commandsParsers.add_parser(
+        'remove-job', aliases=['remove'], help='Remove a job from queue.'
+        )
+    removeJobParser.add_argument(
+        'jobID', action='store', help='The ID of the desired job.'
+        )
+
+    # shutdown command
+    shutdownParser = commandsParsers.add_parser(
+        'shutdown', help='Remotely shutdown yqQS server.'
+        )
+
+
+    # parse arguments
+    args = argParse.parse_args()
+    return args
+
+def callComms(sock, args):
+    print(args.command)
+    if args.command == 'add-job' or args.command == 'add':
+        command = 'addJob'
+        data = [args.name, args.shellCommand, args.priority]
+        addJob(sock, command, data)
+    elif args.command == 'show-jobs' or args.command == 'jobs':
+        command = 'getAllJobs'
+        data = ''
+        getAllJobs(sock, command, data)
+    elif args.command == 'job-info' or args.command == 'info':
+        command = 'getJobInfo'
+        data = args.jobID
+    elif args.command == 'remove-job' or args.command == 'remove':
+        command = 'removeJob'
+        data = args.jobID
+    elif args.command == 'shutdown':
+        command = 'shutdown'
+        data = ''
+    # elif args.command ==  or args.command == :
+        # pass
+    else:
+        return -9
+    return 0
+
+def addJob(sock, command, data):
+    try:
+        sock.connect(SERVER_ADDR)
+        send_message(sock, command, data)
+    except BrokenPipeError:
+        print('ERROR: Broken Pipe, Check network connection')
+        return -1
+    command , recv_data = recv_message(sock)
+    if recv_data == 0:
+        print('Jobs added sucsessfully.')
+    else:
+        print('Error adding job.')
+        return -1
+    return 0
+
+def getAllJobs(sock, command, data):
+    try:
+        sock.connect(SERVER_ADDR)
+        send_message(sock, command, data)
+    except BrokenPipeError:
+        print('ERROR: Broken Pipe, Check network connection')
+        return -1
+    command , recv_data = recv_message(sock)
+    if len(recv_data[0]) > 0:
+        print('High Priority:')
+        print('ID       | Name')
+        print('---------------')
+        for item in recv_data[0]:
+            print(item[0]+ ' | '+ item[1])
+        print('---------------\n')
+    if len(recv_data[1]) > 0:
+        print('Standard priority:')
+        print('ID       | Name')
+        print('---------------')
+        for item in recv_data[1]:
+            print(item[0]+ ' | '+ item[1])
+        print('---------------\n')
+    if len(recv_data[2]) > 0:
+        print('Low priority:')
+        print('ID       | Name')
+        print('---------------')
+        for item in recv_data[1]:
+            print(item[0]+ ' | '+ item[1])
+        print('---------------\n')
+
+if __name__ == '__main__':
+    args = get_args()
+    result = callComms(sock, args)
