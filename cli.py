@@ -92,9 +92,11 @@ def callComms(sock, args):
     elif args.command == 'remove-job' or args.command == 'remove':
         command = 'removeJob'
         data = args.jobID
+        removeJob(sock, command, data)
     elif args.command == 'shutdown':
         command = 'shutdown'
         data = ''
+        shutdown(sock, command, data)
     # elif args.command ==  or args.command == :
         # pass
     else:
@@ -113,7 +115,7 @@ def addJob(sock, command, data):
         print('Jobs added sucsessfully.')
     else:
         print('Error adding job.')
-        return -1
+        return -2
     return 0
 
 def getAllJobs(sock, command, data):
@@ -142,7 +144,7 @@ def getAllJobs(sock, command, data):
         print('Low priority:')
         print('ID       | Name')
         print('---------------')
-        for item in recv_data[1]:
+        for item in recv_data[2]:
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
 
@@ -153,7 +155,14 @@ def getJobInfo(sock, command, data):
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    # command, recv_data = recv_message(sock)
+    command, recv_data = recv_message(sock)
+    ID = recv_data[0]
+    name = recv_data[1]
+    command = recv_data[2]
+    print('ID:  ' + ID)
+    print('Name:  ' + name)
+    print('Command:  ' + Command)
+
 
 def removeJob(sock, command, data):
     try:
@@ -162,6 +171,12 @@ def removeJob(sock, command, data):
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
+    recv_data = recv_message(sock)
+    if recv_data == 0:
+        print('Job removed sucsessfully.')
+    elif recv_data == -1:
+        print('ERROR: Job not found.')
+
 
 def shutdown(sock, command, data):
     try:
