@@ -145,6 +145,15 @@ def getAllJobs(sock, command, data):
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
 
+def getJobInfo(sock, command, data):
+    pass
+
+def removeJob(sock, command, data):
+    pass
+
+def shutdown(sock, command, data):
+    pass
+
 if __name__ == '__main__':
     args = get_args()
     result = callComms(sock, args)
