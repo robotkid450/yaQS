@@ -2,14 +2,18 @@
 import subprocess
 import json
 import asyncio
-UDPADDR = ('127.0.0.1', 9999)
-TCPADDR = None
+udpAddr = ('127.0.0.1', 9999)
+tcpAddr = None
 
 
-class dataClientProtocol(asyncio.Protocol):
+class dataClientProtocol():
     def connection_made(self, transport):
+        print('connection_made')
         self.transport = transport
-        
+        self.transport.write('getJobToRun'.encode())
+
+    def data_received(self, data):
+        print(data)
 
 
 class dispatchReciver():
@@ -21,18 +25,24 @@ class dispatchReciver():
         message = data.decode()
         print('Received %r from %s' % (message, addr))
         if message == 'discover':
-            global TCPADDR
-            TCPADDR = (addr, 9998)
-        if message == 'work Available' and TCPADDR != None:
+            global tcpAddr
+            tcpAddr = addr[0]
+        if message == 'work Available' and tcpAddr != None:
+            print(tcpAddr)
             loop = asyncio.get_event_loop()
-            dataClientCoro = loop.create_connection(dataClientProtocol, TCPADDR)
+            dataClientCoro = loop.create_connection(dataClientProtocol, tcpAddr, 9998)
+            dataClientFUT = asyncio.async(dataClientCoro)
+            dataClientFUT.add_done_callback(self.foo)
+
+    def foo(self, *args):
+        print('dataClientCoro done')
 
 
 loop = asyncio.get_event_loop()
 # One protocol instance will be created to serve all client requests
-UDP_RECV = loop.create_datagram_endpoint(
-    dispatchReciver, local_addr=UDPADDR)
-transport, protocol = loop.run_until_complete(UDP_RECV)
+udp_recv = loop.create_datagram_endpoint(
+    dispatchReciver, local_addr=udpAddr)
+transport, protocol = loop.run_until_complete(udp_recv)
 
 try:
     loop.run_forever()
