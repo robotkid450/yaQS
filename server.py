@@ -9,10 +9,10 @@ import socket
 
 
 #SERVER_ADDR = ('0.0.0.0', 9998) # production
-SERVER_ADDR = ('localhost', 9998) # testing
+SERVER_ADDR = ('127.0.0.1', 9998) # testing
 
 # BROADCAST_ADDR = ('255.255.255.255', 9999) # production
-BROADCAST_ADDR = ('localhost', 9999) # testing
+BROADCAST_ADDR = ('127.0.0.1', 9999) # testing
 
 
 class UDPBroadcaster(object):
