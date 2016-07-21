@@ -142,8 +142,8 @@ if __name__ == '__main__':
         dataServerProtocol, '127.0.0.1', 9998)
     dataServer = loop.run_until_complete(dataServerCoroutine)
     dispatchServer = PeriodicTask(workDispatch, 5)
-    discoverServer = PeriodicTask(discovery, 10)
-    discovery()
+    # discoverServer = PeriodicTask(discovery, 10)
+    # discovery()
 
     # Serve requests until Ctrl+C is pressed
     print('Serving on {}'.format(dataServer.sockets[0].getsockname()))
