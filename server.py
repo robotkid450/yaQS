@@ -90,7 +90,7 @@ class dataServerProtocol(asyncio.Protocol):
         elif command == 'getJobToRun':
             print('Run job request')
             job_to_run = self.que.getJobToRun()
-            print('sending job: ' + job_to_run)
+            print('sending job: ', job_to_run)
             self.send_message(data=job_to_run)
 
         elif command == 'shutdown':
