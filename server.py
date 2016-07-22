@@ -10,6 +10,7 @@ import socket
 
 
 server_addr = ('0.0.0.0', 9998) # production
+# server_addr = ('127.0.0.1', 9998) # testing
 
 # broadcast_addr = ('255.255.255.255', 9999) # production
 broadcast_addr = ('127.0.0.1', 9999) # testing

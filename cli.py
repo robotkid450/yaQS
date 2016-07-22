@@ -7,6 +7,7 @@ import argparse
 
 # Define needed global variables
 server_addr = ('127.0.0.1', 9998)
+# server_addr = ('0.0.0.0', 9998)
 # Define socket
 sock = socket.socket()
 
