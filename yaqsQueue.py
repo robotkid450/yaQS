@@ -3,7 +3,7 @@ import uuid
 
 __version__ = 1.0
 
-class QueueData(object):
+class QueueData(object): # base object of queue managment
     """docstring for QueueData
        This is a basic multi-priority job queueing system."""
 
@@ -11,8 +11,8 @@ class QueueData(object):
         self.HPque = deque()    #Creates high priority que
         self.SPque = deque()    #Creates standard priority que
         self.LPque = deque()    #Creates low priority que
-        self.runningJobs = []
-        self.jobsAvailable = 0
+        self.runningJobs = []   #Creates running job list
+        self.jobsAvailable = 0  #Counter of currently avalible jobs
 
     def pickleCurrentQueue(self, db): # will be implemted later
         return 0
@@ -20,7 +20,8 @@ class QueueData(object):
     def unPickleCurrentQueue(self, db): # will be implemted later
         return 0
 
-    def addJob(self, jobName, command, priority):   #adds a job to specified que
+    def addJob(self, jobName, command, priority): #adds a job to specified que
+        # and increments jobsAvailable by 1
         if priority == 1:
             self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
             self.jobsAvailable += 1
@@ -72,8 +73,8 @@ class QueueData(object):
         jobs = [jobsHP, jobsSP, jobsLP]
         return jobs
 
-    def removeJob(self, jobID): #Removes jobs from que
-
+    def removeJob(self, jobID): #Removes a job from que and decrements jobs
+                                #avalible by 1
         found = False
 
         for item in self.HPque:
@@ -109,8 +110,8 @@ class QueueData(object):
     def modJob(self, jobID, job, command, priority): # will be implemted later
         return 0
 
-    def getJobToRun(self):
-        # retrives next job based on input order and priority or
+    def getJobToRun(self): # retrives next job based on input order & priority
+        # & decerements jobs avalible by 1
         # returns -1 if no jobs are available
         if len(self.HPque) != 0:
             job_to_run = self.HPque.pop()
@@ -127,10 +128,10 @@ class QueueData(object):
         self.runningJobs.append(job_to_run[0])
         return job_to_run
 
-    def getJobsAvailable(self):
+    def getJobsAvailable(self): # returns nuber of jobs avalible
         return self.jobsAvailable
 
-    def markRunningJobComplete(self, job_ID):
+    def markRunningJobComplete(self, job_ID): # marks a running job as completed
         try:
             self.que.runningJobs.delete(job_ID)
         except:
