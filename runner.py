@@ -6,6 +6,7 @@ import json
 import subprocess
 
 udpAddr = ('127.0.0.1', 9999)
+# udpAddr = ('0.0.0.0', 9999)
 tcpAddr = None
 
 def send_message(sock, command, data=''): # composes & sends messages
@@ -53,7 +54,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             global tcpAddr
             tcpAddr = (self.client_address[0], 9998)
 
-        '''recives work avalible broadcast & acts accordingly'''
+        #recives work avalible broadcast & acts accordingly
         elif data == 'work Available' and tcpAddr != None:
             job_ID, job_name, job_command = getJob()
             result = runJob(job_name, job_command)
