@@ -9,8 +9,7 @@ import sys
 import socket
 
 
-#server_addr = ('0.0.0.0', 9998) # production
-server_addr = ('127.0.0.1', 9998) # testing
+server_addr = ('0.0.0.0', 9998) # production
 
 # broadcast_addr = ('255.255.255.255', 9999) # production
 broadcast_addr = ('127.0.0.1', 9999) # testing
@@ -21,7 +20,6 @@ workDispatch_intreval = 1 # time in seconds between workDispatch broadcasts
 class UDPBroadcaster(object): # UDP broadcaster class
     """docstring for UDPBroadcaster"""
     def __init__(self):
-        # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
