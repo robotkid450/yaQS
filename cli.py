@@ -14,18 +14,18 @@ SERVER_ADDR = (host, port)
 sock = socket.socket()
 
 # Helper functions
-def send_message(sock, command, data=''):
+def send_message(sock, command, data=''): # composes & sends messages
         data_to_encode = (command, data)
         data_to_send = json.dumps(data_to_encode)
         sock.send(data_to_send.encode())
 
-def recv_message(sock):
+def recv_message(sock): # recives and decomposes messages
     data_to_decode = sock.recv(1024).decode()
     command, data = json.loads(data_to_decode)
     return command, data
 # End helper function
 
-def get_args():
+def get_args(): # parses command line arguments + commands
     argParse = argparse.ArgumentParser(
         description='Interface with yaQS server.'
         )
@@ -77,7 +77,7 @@ def get_args():
     args = argParse.parse_args()
     return args
 
-def callComms(sock, args):
+def callComms(sock, args): # translates parsed args into network commands
     print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
@@ -105,7 +105,7 @@ def callComms(sock, args):
         return -9
     return 0
 
-def addJob(sock, command, data):
+def addJob(sock, command, data): # tells server to add job
     try:
         sock.connect(SERVER_ADDR)
         send_message(sock, command, data)
@@ -120,8 +120,8 @@ def addJob(sock, command, data):
         return -2
     return 0
 
-def getAllJobs(sock, command, data):
-    try:
+def getAllJobs(sock, command, data): # gets all jobs from server & prints to
+    try:                             # stdout
         sock.connect(SERVER_ADDR)
         send_message(sock, command, data)
     except BrokenPipeError:
@@ -150,7 +150,7 @@ def getAllJobs(sock, command, data):
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
 
-def getJobInfo(sock, command, data):
+def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     try:
         sock.connect(SERVER_ADDR)
         send_message(sock, command, data)
@@ -165,8 +165,7 @@ def getJobInfo(sock, command, data):
     print('Name:  ' + name)
     print('Command:  ' + Command)
 
-
-def removeJob(sock, command, data):
+def removeJob(sock, command, data): # tells server to remove job
     try:
         sock.connect(SERVER_ADDR)
         send_message(sock, command, data)
@@ -179,8 +178,7 @@ def removeJob(sock, command, data):
     elif recv_data == -1:
         print('ERROR: Job not found.')
 
-
-def shutdown(sock, command, data):
+def shutdown(sock, command, data): # tells server to shutdown
     try:
         sock.connect(SERVER_ADDR)
         send_message(sock, command, data)
@@ -189,5 +187,5 @@ def shutdown(sock, command, data):
         return -1
 
 if __name__ == '__main__':
-    args = get_args()
-    result = callComms(sock, args)
+    args = get_args() # calls argparser
+    result = callComms(sock, args) # sends command to server
