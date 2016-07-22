@@ -6,9 +6,7 @@ import json
 import argparse
 
 # Define needed global variables
-host = 'localhost'
-port = 9998
-SERVER_ADDR = (host, port)
+server_addr = (host, port)
 # Define socket
 sock = socket.socket()
 
@@ -106,7 +104,7 @@ def callComms(sock, args): # translates parsed args into network commands
 
 def addJob(sock, command, data): # tells server to add job
     try:
-        sock.connect(SERVER_ADDR)
+        sock.connect(server_addr)
         send_message(sock, command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
@@ -121,7 +119,7 @@ def addJob(sock, command, data): # tells server to add job
 
 def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     try:                             # stdout
-        sock.connect(SERVER_ADDR)
+        sock.connect(server_addr)
         send_message(sock, command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
@@ -151,7 +149,7 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
 
 def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     try:
-        sock.connect(SERVER_ADDR)
+        sock.connect(server_addr)
         send_message(sock, command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
@@ -166,7 +164,7 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
 
 def removeJob(sock, command, data): # tells server to remove job
     try:
-        sock.connect(SERVER_ADDR)
+        sock.connect(server_addr)
         send_message(sock, command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
@@ -179,7 +177,7 @@ def removeJob(sock, command, data): # tells server to remove job
 
 def shutdown(sock, command, data): # tells server to shutdown
     try:
-        sock.connect(SERVER_ADDR)
+        sock.connect(server_addr)
         send_message(sock, command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
