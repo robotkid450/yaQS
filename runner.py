@@ -36,8 +36,8 @@ def submitJobComplete(job_ID, job_result):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
     send_message(sock, 'submitJobComplete', [job_ID, job_result])
-    reply = recv_message(sock)
-    print(reply)
+    #reply = recv_message(sock)
+    #print(reply)
 
 class UDPhandler(socketserver.BaseRequestHandler):
 
@@ -45,7 +45,7 @@ class UDPhandler(socketserver.BaseRequestHandler):
         data = self.request[0].decode()
         sock = self.request[1]
         if data == 'discover':
-            print('discover')
+            # print('discover')
             global tcpAddr
             tcpAddr = (self.client_address[0], 9998)
 
