@@ -93,6 +93,10 @@ class dataServerProtocol(asyncio.Protocol):
             print('sending job: ', job_to_run)
             self.send_message(data=job_to_run)
 
+        elif command == 'submitJobComplete':
+            print('submitJobComplete request')
+            self.send_message(data=0)
+
         elif command == 'shutdown':
             self.transport.close()
             self.quitter()
