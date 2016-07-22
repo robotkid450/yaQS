@@ -1,20 +1,29 @@
 # TODO
 
-## CLI
+## In progress
+
+### CLI
   * Move to OO class.
   * add support for currently running list.
     * add to show-jobs commands.
     * add to job-info.
   * add arg to run under a different port.
   * Add debug option.
+  * Add working directory option
 
-## Server
+### Server
   * Remove completed bit.
   * Add currently running list.
   * Add arg to run under a different port.
   * Add debug option.
+  * Add working directory option
 
-## Runner
-  * write it.
+### Runner
   * add arg to run under a different port.
   * Add debug option.
+  * Add working directory option
+
+## Completed
+
+### Runner
+  * Write it.
