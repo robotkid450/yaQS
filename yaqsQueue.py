@@ -1,6 +1,8 @@
 from collections import deque
 import uuid
 
+__version__ = 1.0
+
 class QueueData(object):
     """docstring for QueueData
        This is a basic multi-priority job queueing system."""
