@@ -1,10 +1,10 @@
-before_script:
-  - which python3
+#before_script:
+#  - which python3
 
-server_func_check:
-  script:
-    - echo 'test not built'
+#server_func_check:
+#  script:
+#    - echo 'test not built'
 
-que_check:
-  script:
-    - python3 test_que.py
+#que_check:
+#  script:
+#    - python3 test_que.py
