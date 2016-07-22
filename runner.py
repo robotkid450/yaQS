@@ -1,53 +1,63 @@
 #!/usr/bin/env python3
-import subprocess
+import socketserver, socket
 import json
-import asyncio
+import subprocess
+
 udpAddr = ('127.0.0.1', 9999)
 tcpAddr = None
 
+def send_message(sock, command, data=''):
+        data_to_encode = (command, data)
+        data_to_send = json.dumps(data_to_encode)
+        sock.send(data_to_send.encode())
 
-class dataClientProtocol():
-    def connection_made(self, transport):
-        print('connection_made')
-        self.transport = transport
-        self.transport.write('getJobToRun'.encode())
+def recv_message(sock):
+    data_to_decode = sock.recv(4096).decode()
+    command, data = json.loads(data_to_decode)
+    return command, data
 
-    def data_received(self, data):
-        print(data)
+def getJob():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(tcpAddr)
+    send_message(sock, 'getJobToRun')
+    recv_command, recv_data = recv_message(sock)
+    job_ID = recv_data[0]
+    job_name = recv_data[1]
+    job_command = recv_data[2]
+    sock.close()
+    return job_ID, job_name, job_command
 
+def runJob(name, command):
+    print('running: ', name)
+    result = subprocess.call(command, shell=True)
+    return result
 
-class dispatchReciver():
-    """docstring for dispatchReciver"""
-    def connection_made(self, transport):
-        self.transport = transport
+def submitJobComplete(job_ID, job_result):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(tcpAddr)
+    send_message(sock, 'submitJobComplete', [job_ID, job_result])
+    reply = recv_message(sock)
+    print(reply)
 
-    def datagram_received(self, data, addr):
-        message = data.decode()
-        print('Received %r from %s' % (message, addr))
-        if message == 'discover':
+class UDPhandler(socketserver.BaseRequestHandler):
+
+    def handle(self):
+        data = self.request[0].decode()
+        sock = self.request[1]
+        if data == 'discover':
+            print('discover')
             global tcpAddr
-            tcpAddr = addr[0]
-        if message == 'work Available' and tcpAddr != None:
-            print(tcpAddr)
-            loop = asyncio.get_event_loop()
-            dataClientCoro = loop.create_connection(dataClientProtocol, tcpAddr, 9998)
-            dataClientFUT = asyncio.async(dataClientCoro)
-            dataClientFUT.add_done_callback(self.foo)
+            tcpAddr = (self.client_address[0], 9998)
 
-    def foo(self, *args):
-        print('dataClientCoro done')
+        elif data == 'work Available' and tcpAddr != None:
+            job_ID, job_name, job_command = getJob()
+            result = runJob(job_name, job_command)
+            print(result)
+            submitJobComplete(job_ID, result)
 
 
-loop = asyncio.get_event_loop()
-# One protocol instance will be created to serve all client requests
-udp_recv = loop.create_datagram_endpoint(
-    dispatchReciver, local_addr=udpAddr)
-transport, protocol = loop.run_until_complete(udp_recv)
 
-try:
-    loop.run_forever()
-except KeyboardInterrupt:
-    pass
 
-transport.close()
-loop.close()
+if __name__ == "__main__":
+    server = socketserver.UDPServer(udpAddr, UDPhandler)
+    server.serve_forever()
