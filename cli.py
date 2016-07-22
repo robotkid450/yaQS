@@ -6,7 +6,7 @@ import json
 import argparse
 
 # Define needed global variables
-server_addr = (host, port)
+server_addr = ('127.0.0.1', 9998)
 # Define socket
 sock = socket.socket()
 
