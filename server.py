@@ -8,12 +8,14 @@ import sys
 import socket
 
 
-#SERVER_ADDR = ('0.0.0.0', 9998) # production
-SERVER_ADDR = ('localhost', 9998) # testing
+#server_addr = ('0.0.0.0', 9998) # production
+server_addr = ('127.0.0.1', 9998) # testing
 
-# BROADCAST_ADDR = ('255.255.255.255', 9999) # production
-BROADCAST_ADDR = ('localhost', 9999) # testing
+# broadcast_addr = ('255.255.255.255', 9999) # production
+broadcast_addr = ('127.0.0.1', 9999) # testing
 
+discovery_intreval = 10
+workDispatch_intreval = 1
 
 class UDPBroadcaster(object):
     """docstring for UDPBroadcaster"""
@@ -24,13 +26,13 @@ class UDPBroadcaster(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     def sendDiscovery(self):
-        self.sock.sendto('discover'.encode(), BROADCAST_ADDR)
-        print('sending discover')
+        self.sock.sendto('discover'.encode(), broadcast_addr)
+        # print('sending discover')
         self._stop()
 
     def sendWorkAvailable(self):
-        self.sock.sendto('work Available'.encode(), BROADCAST_ADDR)
-        print('sending work avalible')
+        self.sock.sendto('work Available'.encode(), broadcast_addr)
+        # print('sending work avalible')
         self._stop()
 
     def _stop(self):
@@ -87,6 +89,16 @@ class dataServerProtocol(asyncio.Protocol):
             result = self.que.removeJob(job_ID)
             self.send_message(data=result)
 
+        elif command == 'getJobToRun':
+            print('Run job request')
+            job_to_run = self.que.getJobToRun()
+            print('sending job: ', job_to_run)
+            self.send_message(data=job_to_run)
+
+        elif command == 'submitJobComplete':
+            print('submitJobComplete request')
+            self.que.markRunningJobComplete(cmd_data[0])
+
         elif command == 'shutdown':
             self.transport.close()
             self.quitter()
@@ -139,11 +151,11 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
     dataServerCoroutine = loop.create_server(
-        dataServerProtocol, '127.0.0.1', 9998)
+        dataServerProtocol, server_addr[0], server_addr[1])
     dataServer = loop.run_until_complete(dataServerCoroutine)
-    dispatchServer = PeriodicTask(workDispatch, 5)
-    # discoverServer = PeriodicTask(discovery, 10)
-    # discovery()
+    dispatchServer = PeriodicTask(workDispatch, workDispatch_intreval)
+    discoverServer = PeriodicTask(discovery, discovery_intreval)
+    discovery()
 
     # Serve requests until Ctrl+C is pressed
     print('Serving on {}'.format(dataServer.sockets[0].getsockname()))

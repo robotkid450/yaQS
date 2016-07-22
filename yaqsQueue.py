@@ -9,6 +9,7 @@ class QueueData(object):
         self.HPque = deque()    #Creates high priority que
         self.SPque = deque()    #Creates standard priority que
         self.LPque = deque()    #Creates low priority que
+        self.runningJobs = []
         self.jobsAvailable = 0
 
     def pickleCurrentQueue(self, db): # will be implemted later
@@ -121,10 +122,19 @@ class QueueData(object):
         else:
             return -1
         self.jobsAvailable -= 1
+        self.runningJobs.append(job_to_run[0])
         return job_to_run
 
     def getJobsAvailable(self):
         return self.jobsAvailable
+
+    def markRunningJobComplete(self, job_ID):
+        try:
+            self.que.runningJobs.delete(job_ID)
+        except:
+            return -1
+        else:
+            return 0
 
 if __name__ == '__main__':
     # test code
