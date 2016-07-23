@@ -4,6 +4,7 @@ __version__ = '1.1.1'
 import socket
 import json
 import argparse
+import sys
 
 # Define needed global variables
 
