@@ -6,8 +6,11 @@ import json
 import argparse
 
 # Define needed global variables
-server_addr = ('127.0.0.1', 9998)
-# server_addr = ('0.0.0.0', 9998)
+
+server_addr = None
+# example
+# server_addr = ('192.168.1.x', 9998)
+
 # Define socket
 sock = socket.socket()
 
@@ -185,5 +188,9 @@ def shutdown(sock, command, data): # tells server to shutdown
         return -1
 
 if __name__ == '__main__':
-    args = get_args() # calls argparser
-    result = callComms(sock, args) # sends command to server
+    if server_addr == None:
+        print('''Please edit this file and set proper server address in server_adder variable.''')
+        sys.exit(-2)
+    else:
+        args = get_args() # calls argparser
+        result = callComms(sock, args) # sends command to server
