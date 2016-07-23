@@ -10,10 +10,8 @@ import socket
 
 
 server_addr = ('0.0.0.0', 9998) # production
-# server_addr = ('127.0.0.1', 9998) # testing
 
-# broadcast_addr = ('255.255.255.255', 9999) # production
-broadcast_addr = ('127.0.0.1', 9999) # testing
+broadcast_addr = ('255.255.255.255', 9999) # production
 
 discovery_intreval = 10   # time in seconds between discovery broadcasrs
 workDispatch_intreval = 1 # time in seconds between workDispatch broadcasts
