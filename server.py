@@ -48,7 +48,7 @@ def discovery(): # helper function for discovery broadcast
     return 0
 
 
-# async Protocol object for data server
+# async Protocol object for data server TCP
 class dataServerProtocol(asyncio.Protocol):
     """docstring for MessageProtocol"""
     def connection_made(self, transport):
