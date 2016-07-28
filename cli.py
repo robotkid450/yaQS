@@ -10,6 +10,7 @@ import sys
 server_addr = None
 # example
 # server_addr = ('192.168.1.x', 9998)
+server_addr = ('localhost', 9998)
 
 # Define socket
 sock = socket.socket()
@@ -79,7 +80,7 @@ def get_args(): # parses command line arguments + commands
     return args
 
 def callComms(sock, args): # translates parsed args into network commands
-    print(args.command)
+    # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
         data = [args.name, args.shellCommand, args.priority]
@@ -129,27 +130,44 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
         print('ERROR: Broken Pipe, Check network connection')
         return -1
     command , recv_data = recv_message(sock)
+    jobsFound = False
     if len(recv_data[0]) > 0:
+        jobsFound = True
         print('High Priority:')
         print('ID       | Name')
         print('---------------')
         for item in recv_data[0]:
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
+
     if len(recv_data[1]) > 0:
+        jobsFound = True
         print('Standard priority:')
         print('ID       | Name')
         print('---------------')
         for item in recv_data[1]:
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
+
     if len(recv_data[2]) > 0:
+        jobsFound = True
         print('Low priority:')
         print('ID       | Name')
         print('---------------')
         for item in recv_data[2]:
             print(item[0]+ ' | '+ item[1])
         print('---------------\n')
+    if len(recv_data[3]) > 0:
+        jobsFound = True
+        print('Running:')
+        print('ID       | Name')
+        print('---------------')
+        for item in recv_data[3]:
+            print(item[0]+ ' | '+ item[1])
+        print('---------------\n')
+
+    if not jobsFound:
+        print('No jobs currently queued or running.')
 
 def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     try:

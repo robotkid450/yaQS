@@ -22,12 +22,18 @@ def getJob(): # connectes and retrives a job from to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
     send_message(sock, 'getJobToRun')
-    recv_command, recv_data = recv_message(sock)
-    job_ID = recv_data[0]
-    job_name = recv_data[1]
-    job_command = recv_data[2]
-    sock.close()
-    return job_ID, job_name, job_command
+    command, data = recv_message(sock)
+    # print('data = ', data)
+    if data != -1:
+        recv_data = data
+        job_ID = recv_data[0]
+        job_name = recv_data[1]
+        job_command = recv_data[2]
+        sock.close()
+        return job_ID, job_name, job_command
+    else:
+        return None
+
 
 def runJob(name, command): # runs the retrived job
     print('running: ', name)
@@ -55,10 +61,15 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
 
         #recives work avalible broadcast & acts accordingly
         elif data == 'work Available' and tcpAddr != None:
-            job_ID, job_name, job_command = getJob()
-            result = runJob(job_name, job_command)
-            print(result)
-            submitJobComplete(job_ID, result)
+            job = getJob()
+            # print('job=',job)
+            if job != None:
+                job_ID, job_name, job_command = job
+                result = runJob(job_name, job_command)
+                print(result)
+                submitJobComplete(job_ID, result)
+            else:
+                pass
 
 
 

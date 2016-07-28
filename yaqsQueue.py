@@ -61,6 +61,7 @@ class QueueData(object): # base object of queue managment
         jobsHP = [] #High priority jobs
         jobsSP = [] #standard priority jobs
         jobsLP = [] #Low priority jobs
+        jobsRN = []
 
         for item in self.HPque:                 #These loop through ques
             jobsHP.append([item[0], item[1]])   #and extract the job name
@@ -70,7 +71,10 @@ class QueueData(object): # base object of queue managment
 
         for item in self.LPque:
             jobsLP.append([item[0], item[1]])
-        jobs = [jobsHP, jobsSP, jobsLP]
+
+        for item in self.runningJobs:
+            jobsRN.append([item[0], item[1]])
+        jobs = [jobsHP, jobsSP, jobsLP, jobsRN]
         return jobs
 
     def removeJob(self, jobID): #Removes a job from que and decrements jobs
@@ -125,7 +129,7 @@ class QueueData(object): # base object of queue managment
         else:
             return -1
         self.jobsAvailable -= 1
-        self.runningJobs.append(job_to_run[0])
+        self.runningJobs.append(job_to_run)
         return job_to_run
 
     def getJobsAvailable(self): # returns nuber of jobs avalible
@@ -133,7 +137,12 @@ class QueueData(object): # base object of queue managment
 
     def markRunningJobComplete(self, job_ID): # marks a running job as completed
         try:
-            self.que.runningJobs.delete(job_ID)
+            for item in self.runningJobs:
+                if item[0] == job_ID:
+                    self.runningJobs.remove(item)
+                    break
+                else:
+                    pass
         except:
             return -1
         else:

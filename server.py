@@ -38,6 +38,7 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
 def workDispatch(): # helper function for workDispatch broadcast
     if queue.getJobsAvailable() > 0:
+        print('sending work')
         UB = UDPBroadcaster()
         UB.sendWorkAvailable()
     return 0
@@ -95,7 +96,7 @@ class dataServerProtocol(asyncio.Protocol):
             self.send_message(data=job_to_run)
 
         elif command == 'submitJobComplete': # removes job from running list
-            print('submitJobComplete request')
+            print('submitJobComplete request\n')
             self.que.markRunningJobComplete(cmd_data[0])
 
         elif command == 'shutdown': # remotely kills server
