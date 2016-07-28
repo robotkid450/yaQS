@@ -4,6 +4,7 @@ __version__ = '1.1.1'
 import socketserver, socket
 import json
 import subprocess
+import sys
 
 udpAddr = ('0.0.0.0', 9999)
 tcpAddr = None
@@ -70,6 +71,11 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
                 submitJobComplete(job_ID, result)
             else:
                 pass
+
+        elif data == 'shutdown':
+            print('shutdown')
+            server.shutdown()
+            sys.exit(0)
 
 
 
