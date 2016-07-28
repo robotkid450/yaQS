@@ -33,12 +33,16 @@ class UDPBroadcaster(object): # UDP broadcaster class
         # print('sending work avalible')
         self._stop()
 
+    def sendShutdown(self): # sends shutdown broadcast
+        self.sock.sendto('shutdown'.encode(), broadcast_addr)
+        self._stop()
+
     def _stop(self): # stops broadcast repeat loop
         self.sock.close()
 
 def workDispatch(): # helper function for workDispatch broadcast
     if queue.getJobsAvailable() > 0:
-        print('sending work')
+        # print('sending work')
         UB = UDPBroadcaster()
         UB.sendWorkAvailable()
     return 0
@@ -46,6 +50,11 @@ def workDispatch(): # helper function for workDispatch broadcast
 def discovery(): # helper function for discovery broadcast
     UB = UDPBroadcaster()
     UB.sendDiscovery()
+    return 0
+
+def shutdown():
+    UB = UDPBroadcaster()
+    UB.sendShutdown()
     return 0
 
 
@@ -100,6 +109,7 @@ class dataServerProtocol(asyncio.Protocol):
             self.que.markRunningJobComplete(cmd_data[0])
 
         elif command == 'shutdown': # remotely kills server
+            shutdown()
             self.transport.close()
             self.quitter()
 
