@@ -23,15 +23,15 @@ class QueueData(object): # base object of queue managment
     def addJob(self, jobName, command, priority): #adds a job to specified que
         # and increments jobsAvailable by 1
         if priority == 1:
-            self.HPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.HPque.append([str(uuid.uuid4())[:8], jobName, command])
             self.jobsAvailable += 1
             return 0
         elif priority == 2:
-            self.SPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.SPque.append([str(uuid.uuid4())[:8], jobName, command])
             self.jobsAvailable += 1
             return 0
         elif priority == 3:
-            self.LPque.append([str(uuid.uuid4())[:8], jobName, command, 0])
+            self.LPque.append([str(uuid.uuid4())[:8], jobName, command])
             self.jobsAvailable += 1
             return 0
         else:
