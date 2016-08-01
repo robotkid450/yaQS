@@ -9,7 +9,7 @@ import sys
 import socket
 
 
-server_addr = ('0.0.0.0', 9998) # production
+server_addr = ('0.0.0.0', 9999) # production
 
 broadcast_addr = ('255.255.255.255', 9999) # production
 

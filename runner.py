@@ -57,7 +57,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
          manually set before jobs can be processed'''
         if data == 'discover':
             global tcpAddr
-            tcpAddr = (self.client_address[0], 9998)
+            tcpAddr = (self.client_address[0], 9999)
 
         #recives work avalible broadcast & acts accordingly
         elif data == 'work Available' and tcpAddr != None:

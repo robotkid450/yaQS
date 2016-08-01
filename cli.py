@@ -9,8 +9,8 @@ import sys
 
 server_addr = None
 # example
-# server_addr = ('192.168.1.x', 9998)
-server_addr = ('localhost', 9998)
+# server_addr = ('192.168.1.x', 9999)
+server_addr = ('localhost', 9999)
 
 # Define socket
 sock = socket.socket()
