@@ -2,6 +2,9 @@
 
 ## In progress
 
+### All
+  * Move to logging
+
 ### CLI
   * Move to OO class.
   * add arg to run under a different port.
