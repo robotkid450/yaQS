@@ -9,7 +9,6 @@
   * Add working directory option
 
 ### Server
-  * Add currently running list.
   * Add arg to run under a different port.
   * Add debug option.
   * Add working directory option
@@ -31,6 +30,8 @@
 
 ### Server
   * Remove completed bit.
+  * Add currently running list.
+  
 
 ### Runner
   * Write it.
