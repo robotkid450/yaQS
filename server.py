@@ -3,7 +3,7 @@
 
 __version__ = '1.1.1'
 import asyncio
-import yaqsQueue
+import yaqs_queuemanger.yaqsQueue as yaqsQueue
 import json
 import sys
 import socket
