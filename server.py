@@ -7,7 +7,11 @@ import yaqsQueue
 import json
 import sys
 import socket
+import logging
 
+
+# debug = True
+debug = False
 
 server_addr = ('0.0.0.0', 9999) # production
 
@@ -25,12 +29,12 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
     def sendDiscovery(self): # sends discovery broadcast
         self.sock.sendto('discover'.encode(), broadcast_addr)
-        # print('sending discover')
+        logging.debug('sending discover')
         self._stop()
 
     def sendWorkAvailable(self): # sends work avalible broadcast
         self.sock.sendto('work Available'.encode(), broadcast_addr)
-        # print('sending work avalible')
+        rootLogger.debug('sending work avalible')
         self._stop()
 
     def _stop(self): # stops broadcast repeat loop
@@ -38,7 +42,7 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
 def workDispatch(): # helper function for workDispatch broadcast
     if queue.getJobsAvailable() > 0:
-        print('sending work')
+        rootLogger.debug('work avalibe')
         UB = UDPBroadcaster()
         UB.sendWorkAvailable()
     return 0
@@ -54,63 +58,62 @@ class dataServerProtocol(asyncio.Protocol):
     """docstring for MessageProtocol"""
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
-        print('Connection from {}'.format(peername))
+        rootLogger.info('Connection from {}'.format(peername))
         self.transport = transport
         self.que = queue
 
     def data_received(self, data):
         message = data.decode()
-        print('Data received: {!r}'.format(message))
+        rootLogger.debug('Data received: {!r}'.format(message))
         command, cmd_data = json.loads(message)
-        print('command', command)
-        print('cmd_data', cmd_data)
+        rootLogger.debug('command %s', command)
+        rootLogger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
-            print('adding Job')
             job_to_add = cmd_data
             result = self.que.addJob(job_to_add[0], job_to_add[1], job_to_add[2])
-            print('added job :', job_to_add[0])
+            rootLogger.info('added job : %s', job_to_add[0])
             self.send_message(data=result)
 
         elif command == 'getAllJobs': # gets all jobs currently in system
-            print('getting jobs')
+            rootLogger.debug('getting jobs')
             all_jobs = self.que.getAllJobs()
             self.send_message(data=all_jobs)
 
         elif command == 'getJobInfo': # get all information on a job
-            print('job info request')
+            rootLogger.debug('job info request')
             job_ID = cmd_data
             job_Info = self.que.getJobInfo(job_ID)
             self.send_message(data=job_Info)
 
         elif command == 'removeJob': # removes a job from queue DOES NOT STOP
-            print('job remove request') # RUNNING JOB!!
-            job_ID = cmd_data
-            print('removing job:', job_ID)
+            job_ID = cmd_data        # RUNNING JOB!!
+            rootLogger.info('removing job:', job_ID)
             result = self.que.removeJob(job_ID)
             self.send_message(data=result)
 
         elif command == 'getJobToRun': # gets next job from queue
-            print('Run job request')
+            rootLogger.debug('Run job request')
             job_to_run = self.que.getJobToRun()
-            print('sending job: ', job_to_run)
+            rootLogger.info('sending job: %s', job_to_run)
             self.send_message(data=job_to_run)
 
         elif command == 'submitJobComplete': # removes job from running list
-            print('submitJobComplete request\n')
+            rootLogger.info('Job submitted as complete.')
             self.que.markRunningJobComplete(cmd_data[0])
 
         elif command == 'shutdown': # remotely kills server
+            rootLogger.info('Shutdown command recived.')
             self.transport.close()
             self.quitter()
 
         else:
-            print('invalid command') # replies to invalid commands
+            rootLogger.warn('invalid command') # replies to invalid commands
             self.send_message(data='invalid command')
 
         self.transport.close()
 
     def connection_lost(self, exc): # executed on connection loss
-        print('client disconnected')
+        rootLogger.info('client disconnected')
         queue = self.que
 
 
@@ -143,6 +146,24 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
 
 
 if __name__ == '__main__':
+    # Set up logging
+    rootLogger = logging.getLogger(__name__)
+    # consoleLogStream = logging.StreamHandler()
+    fileLogOutput = logging.FileHandler('server.log')
+
+    if debug == True:
+        rootLogger.setLevel(logging.DEBUG)
+    else:
+        rootLogger.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # consoleLogStream.setFormatter(formatter)
+    fileLogOutput.setFormatter(formatter)
+
+    # rootLogger.addHandler(consoleLogStream)
+    rootLogger.addHandler(fileLogOutput)
+
     # Create storage queue
     queue = yaqsQueue.QueueData()
 
@@ -160,11 +181,12 @@ if __name__ == '__main__':
     discovery()
 
     # Serve requests until Ctrl+C is pressed
-    print('Serving on {}'.format(dataServer.sockets[0].getsockname()))
+    rootLogger.info('Serving on {}'.format(dataServer.sockets[0].getsockname()))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
         pass
+        rootLogger.info('Shutting down.')
 
     # Close the server
     dataServer.close()
