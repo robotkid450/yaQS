@@ -45,7 +45,7 @@ def get_args(): # parses command line arguments + commands
         'shellCommand', action='store', help='The command to be run'
         )
     addJobParser.add_argument(
-        'priority',type=int, action='store', help='The jobs priority.'
+        'priority',type=int, default=2, action='store', help='The jobs priority.'
         )
 
     # getAllJobs command
