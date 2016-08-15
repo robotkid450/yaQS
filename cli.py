@@ -182,7 +182,7 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     command = recv_data[2]
     print('ID:  ' + ID)
     print('Name:  ' + name)
-    print('Command:  ' + Command)
+    print('Command:  ' + command)
 
 def removeJob(sock, command, data): # tells server to remove job
     try:
