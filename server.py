@@ -130,7 +130,6 @@ class dataServerProtocol(asyncio.Protocol):
 class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
     def __init__(self, func, interval):
         self.func = func
-        print(func)
         self.interval = interval
         self._loop = asyncio.get_event_loop()
         self._set()
