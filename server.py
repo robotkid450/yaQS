@@ -29,12 +29,12 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
     def sendDiscovery(self): # sends discovery broadcast
         self.sock.sendto('discover'.encode(), broadcast_addr)
-        logging.debug('sending discover')
+        logging.debug('Sending Discovery packet.')
         self._stop()
 
     def sendWorkAvailable(self): # sends work avalible broadcast
         self.sock.sendto('work Available'.encode(), broadcast_addr)
-        rootLogger.debug('sending work avalible')
+        rootLogger.debug('Sending work avalible.')
         self._stop()
 
     def _stop(self): # stops broadcast repeat loop
@@ -42,7 +42,7 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
 def workDispatch(): # helper function for workDispatch broadcast
     if queue.getJobsAvailable() > 0:
-        rootLogger.debug('work avalibe')
+        rootLogger.debug('Work Avalibe')
         UB = UDPBroadcaster()
         UB.sendWorkAvailable()
     return 0
@@ -107,7 +107,7 @@ class dataServerProtocol(asyncio.Protocol):
             self.quitter()
 
         else:
-            rootLogger.warn('invalid command') # replies to invalid commands
+            rootLogger.warn('invalid command recived') # replies to invalid commands
             self.send_message(data='invalid command')
 
         self.transport.close()
@@ -145,7 +145,7 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
         self._handler.cancel()
 
 
-if __name__ == '__main__':
+def configureLogging():
     # Set up logging
     rootLogger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
@@ -163,6 +163,13 @@ if __name__ == '__main__':
 
     # rootLogger.addHandler(consoleLogStream)
     rootLogger.addHandler(fileLogOutput)
+
+    return rootLogger
+
+if __name__ == '__main__':
+
+    # run configure logging
+    rootLogger = configureLogging()
 
     # Create storage queue
     queue = yaqsQueue.QueueData()
