@@ -9,6 +9,8 @@ import logging
 udpAddr = ('0.0.0.0', 9999)
 tcpAddr = None
 
+debug = True
+
 def send_message(sock, command, data=''): # composes & sends messages
         data_to_encode = (command, data)
         data_to_send = json.dumps(data_to_encode)
@@ -97,5 +99,8 @@ def configureLogging():
 if __name__ == "__main__":
     # Creates broadcast reciver
     server = socketserver.UDPServer(udpAddr, UDPhandler)
+    rootLogger = configureLogging()
+    rootLogger.info('test')
+    
     # starts runner
     server.serve_forever()
