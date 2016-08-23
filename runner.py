@@ -4,6 +4,7 @@ __version__ = '1.1.1'
 import socketserver, socket
 import json
 import subprocess
+import logging
 
 udpAddr = ('0.0.0.0', 9999)
 tcpAddr = None
@@ -72,7 +73,26 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
                 pass
 
 
+def configureLogging():
+    # Set up logging
+    rootLogger = logging.getLogger(__name__)
+    # consoleLogStream = logging.StreamHandler()
+    fileLogOutput = logging.FileHandler('server.log')
 
+    if debug == True:
+        rootLogger.setLevel(logging.DEBUG)
+    else:
+        rootLogger.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # consoleLogStream.setFormatter(formatter)
+    fileLogOutput.setFormatter(formatter)
+
+    # rootLogger.addHandler(consoleLogStream)
+    rootLogger.addHandler(fileLogOutput)
+
+    return rootLogger
 
 if __name__ == "__main__":
     # Creates broadcast reciver
