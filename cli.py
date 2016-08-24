@@ -45,7 +45,7 @@ def get_args(): # parses command line arguments + commands
         'shellCommand', action='store', help='The command to be run'
         )
     addJobParser.add_argument(
-        'priority',type=int, action='store', help='The jobs priority.'
+        'priorty', nargs='?', type=int, default=2, action='store', help='The jobs priority.'
         )
 
     # getAllJobs command
@@ -83,7 +83,10 @@ def callComms(sock, args): # translates parsed args into network commands
     # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
-        data = [args.name, args.shellCommand, args.priority]
+        try:
+            data = [args.name, args.shellCommand, args.priority]
+        except AttributeError:
+            data = [args.name, args.shellCommand, 2]
         addJob(sock, command, data)
     elif args.command == 'show-jobs' or args.command == 'jobs':
         command = 'getAllJobs'
