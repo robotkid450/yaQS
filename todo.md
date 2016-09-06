@@ -14,7 +14,8 @@
 ### Server
   * Add arg to run under a different port.
   * Add debug option.
-  * Add working directory option
+  * Add working directory option.
+  * Move to deamon.
 
 
 ### Runner
