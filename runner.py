@@ -40,6 +40,7 @@ def getJob(): # connectes and retrives a job from to server
 
 def runJob(name, command, workingDirectory=os.getcwd()): # runs the retrived job
     print('running: ', name)
+    orriginalWorkingDirectory=os.getcwd()
     if workingDirectory != os.getcwd():
         try:
             os.chdir(workingDirectory)
@@ -49,6 +50,7 @@ def runJob(name, command, workingDirectory=os.getcwd()): # runs the retrived job
         else:
             result = subprocess.call(command, shell=True)
         finally:
+            os.chdir(orriginalWorkingDirectory)
             return result
 
 
