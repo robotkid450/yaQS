@@ -33,6 +33,7 @@ def getJob(): # connectes and retrives a job from to server
         job_ID = recv_data[0]
         job_name = recv_data[1]
         job_command = recv_data[2]
+        job_working_directory = recv_data[3]
         sock.close()
         return job_ID, job_name, job_command
     else:
