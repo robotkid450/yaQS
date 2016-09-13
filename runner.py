@@ -5,6 +5,7 @@ import socketserver, socket
 import json
 import subprocess
 import logging
+import os
 
 udpAddr = ('0.0.0.0', 9999)
 tcpAddr = None
@@ -37,11 +38,20 @@ def getJob(): # connectes and retrives a job from to server
     else:
         return None
 
-
-def runJob(name, command): # runs the retrived job
+def runJob(name, command, workingDirectory=os.getcwd()): # runs the retrived job
     print('running: ', name)
-    result = subprocess.call(command, shell=True)
-    return result
+    if workingDirectory != os.getcwd():
+        try:
+            os.chdir(workingDirectory)
+
+        except:
+            result = -1
+        else:
+            result = subprocess.call(command, shell=True)
+        finally:
+            return result
+
+
 
 def submitJobComplete(job_ID, job_result): # reports completed jobs to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -101,6 +111,6 @@ if __name__ == "__main__":
     server = socketserver.UDPServer(udpAddr, UDPhandler)
     rootLogger = configureLogging()
     rootLogger.info('test')
-    
+
     # starts runner
     server.serve_forever()
