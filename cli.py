@@ -45,7 +45,12 @@ def get_args(): # parses command line arguments + commands
         'shellCommand', action='store', help='The command to be run'
         )
     addJobParser.add_argument(
-        'priortiy', nargs='?', type=int, default=2, action='store', help='The jobs priority.'
+        'workingDirectory', nargs='?', default=0, action='store',
+        help='The directory for the command to be run in.'
+        )
+    addJobParser.add_argument(
+        'priortiy', nargs='?', type=int, default=2, action='store',
+        help='The jobs priority.'
         )
 
     # getAllJobs command
@@ -83,10 +88,15 @@ def callComms(sock, args): # translates parsed args into network commands
     # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
+        data = [args.name, args.shellCommand]
         try:
-            data = [args.name, args.shellCommand, args.priority]
+            data.append(args.priority)
         except AttributeError:
-            data = [args.name, args.shellCommand, 2]
+            data.append(2)
+        try:
+            data.append(args.workingDirectory)
+        except AttributeError:
+            data.append(-1)
         addJob(sock, command, data)
     elif args.command == 'show-jobs' or args.command == 'jobs':
         command = 'getAllJobs'
@@ -183,9 +193,11 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     ID = recv_data[0]
     name = recv_data[1]
     command = recv_data[2]
+    workingDirectory = recv_data[3]
     print('ID:  ' + ID)
     print('Name:  ' + name)
     print('Command:  ' + command)
+    print('working Directory:' + workingDirectory)
 
 def removeJob(sock, command, data): # tells server to remove job
     try:

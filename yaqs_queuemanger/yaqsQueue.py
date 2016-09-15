@@ -20,18 +20,18 @@ class QueueData(object): # base object of queue managment
     def unPickleCurrentQueue(self, db): # will be implemted later
         return 0
 
-    def addJob(self, jobName, command, priority): #adds a job to specified que
+    def addJob(self, jobName, command, priority, workingDirectory): #adds a job to specified que
         # and increments jobsAvailable by 1
         if priority == 1:
-            self.HPque.append([str(uuid.uuid4())[:8], jobName, command])
+            self.HPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
             self.jobsAvailable += 1
             return 0
         elif priority == 2:
-            self.SPque.append([str(uuid.uuid4())[:8], jobName, command])
+            self.SPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
             self.jobsAvailable += 1
             return 0
         elif priority == 3:
-            self.LPque.append([str(uuid.uuid4())[:8], jobName, command])
+            self.LPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
             self.jobsAvailable += 1
             return 0
         else:
