@@ -70,7 +70,9 @@ class dataServerProtocol(asyncio.Protocol):
         rootLogger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
             job_to_add = cmd_data
-            result = self.que.addJob(job_to_add[0], job_to_add[1], job_to_add[2])
+            result = self.que.addJob(
+                job_to_add[0], job_to_add[1], job_to_add[2], job_to_add[3]
+                )
             rootLogger.info('added job : %s', job_to_add[0])
             self.send_message(data=result)
 
