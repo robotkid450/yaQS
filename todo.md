@@ -9,7 +9,6 @@
   * Move to OO class.
   * add arg to run under a different port.
   * Add debug option.
-  * Add working directory option
   * Add multi server support
 
 ### Server
@@ -40,3 +39,4 @@
 
 ### Runner
   * Write it.
+  * Add working directory option
