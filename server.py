@@ -71,9 +71,14 @@ class dataServerProtocol(asyncio.Protocol):
         if command == 'addJob': #adds jobs to queue
             job_to_add = cmd_data
             print(job_to_add)
-            result = self.que.addJob(
-                job_to_add[0], job_to_add[1], job_to_add[2], job_to_add[3]
-                )
+            if job_to_add[3] !=0:
+                result = self.que.addJob(
+                    job_to_add[0], job_to_add[1], job_to_add[2], job_to_add[3]
+                    )
+            else:
+                result = self.que.addJob(
+                    job_to_add[0], job_to_add[1], job_to_add[2], None
+                    )
             rootLogger.info('added job : %s', job_to_add[0])
             self.send_message(data=result)
 
