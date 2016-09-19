@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 import asyncio
 import yaqs_queuemanger.yaqsQueue as yaqsQueue
 import json
@@ -95,7 +95,7 @@ class dataServerProtocol(asyncio.Protocol):
 
         elif command == 'removeJob': # removes a job from queue
             job_ID = cmd_data        # DOES NOT STOP RUNNING JOB!!
-            root_logger.info('removing job:', job_ID)
+            root_logger.info('removing job: %s', job_ID)
             result = self.que.removeJob(job_ID)
             self.sendMessage(data=result)
 
