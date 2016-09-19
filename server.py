@@ -93,8 +93,8 @@ class dataServerProtocol(asyncio.Protocol):
             job_Info = self.que.getJobInfo(job_ID)
             self.sendMessage(data=job_Info)
 
-        elif command == 'removeJob': # removes a job from queue DOES NOT STOP
-            job_ID = cmd_data        # RUNNING JOB!!
+        elif command == 'removeJob': # removes a job from queue
+            job_ID = cmd_data        # DOES NOT STOP RUNNING JOB!!
             root_logger.info('removing job:', job_ID)
             result = self.que.removeJob(job_ID)
             self.sendMessage(data=result)
