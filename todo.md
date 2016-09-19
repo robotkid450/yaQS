@@ -7,9 +7,9 @@
 
 ### CLI
   * Move to OO class.
-  * add arg to run under a different port.
+  * Add arg to run under a different port.
   * Add debug option.
-  * Add multi server support
+  * Add multi server support.
 
 ### Server
   * Add arg to run under a different port.
@@ -18,19 +18,19 @@
 
 
 ### Runner
-  * add arg to run under a different port.
+  * Add arg to run under a different port.
   * Add debug option.
-  * Add working directory option
-  * Add command output (real-time and post completion)
-  * Add multi-user capability
+  * Add working directory option.
+  * Add command output (real-time and post completion).
+  * Add multi-user capability.
 
 ## Completed
 
 ### CLI
-  * add support for currently running list.
-  * add to show-jobs commands.
-  * add to job-info.
-  a* Add working directory option.
+  * Add support for currently running list.
+  * Add to show-jobs commands.
+  * Add to job-info.
+  * Add working directory option.
 
 ### Server
   * Remove completed bit.
@@ -40,4 +40,4 @@
 
 ### Runner
   * Write it.
-  * Add working directory option
+  * Add working directory option.
