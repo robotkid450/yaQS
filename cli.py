@@ -35,47 +35,47 @@ def get_args(): # parses command line arguments + commands
     commandsParsers = argParse.add_subparsers(help='commands', dest='command')
 
     # addJob command
-    addJobParser = commandsParsers.add_parser(
+    add_job_parser = commandsParsers.add_parser(
         'add-job', aliases=['add'], help='Add a job to queue.'
         )
-    addJobParser.add_argument(
+    add_job_parser.add_argument(
         'name', action='store', help='The name of the job.'
         )
-    addJobParser.add_argument(
-        'shellCommand', action='store', help='The command to be run'
+    add_job_parser.add_argument(
+        'shell_command', action='store', help='The command to be run'
         )
-    addJobParser.add_argument(
-        'workingDirectory', nargs='?', default=0, action='store',
+    add_job_parser.add_argument(
+        'working_directory', nargs='?', default=0, action='store',
         help='The directory for the command to be run in.'
         )
-    addJobParser.add_argument(
+    add_job_parser.add_argument(
         'priortiy', nargs='?', type=int, default=2, action='store',
         help='The jobs priority.'
         )
 
     # getAllJobs command
-    getAllJobsParser = commandsParsers.add_parser(
+    get_all_jobs_parser = commandsParsers.add_parser(
         'show-jobs', aliases=['jobs'], help='Show all jobs.'
         )
 
     # getJobInfo command
-    getJobInfoParser = commandsParsers.add_parser(
+    get_job_info_parser = commandsParsers.add_parser(
         'job-info',  aliases=['info'], help='Get a jobs info.'
         )
-    getJobInfoParser.add_argument(
+    get_job_info_parser.add_argument(
         'jobID', action='store', help='The ID of the desired job.'
         )
 
     # removeJob command
-    removeJobParser = commandsParsers.add_parser(
+    remove_job_parser = commandsParsers.add_parser(
         'remove-job', aliases=['remove'], help='Remove a job from queue.'
         )
-    removeJobParser.add_argument(
+    remove_job_parser.add_argument(
         'jobID', action='store', help='The ID of the desired job.'
         )
 
     # shutdown command
-    shutdownParser = commandsParsers.add_parser(
+    shutdown_parser = commandsParsers.add_parser(
         'shutdown', help='Remotely shutdown yqQS server.'
         )
 
@@ -88,13 +88,13 @@ def callComms(sock, args): # translates parsed args into network commands
     # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
-        data = [args.name, args.shellCommand]
+        data = [args.name, args.shell_command]
         try:
             data.append(args.priority)
         except AttributeError:
             data.append(2)
         try:
-            data.append(args.workingDirectory)
+            data.append(args.working_directory)
         except AttributeError:
             data.append(-1)
         addJob(sock, command, data)
@@ -193,11 +193,11 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     ID = recv_data[0]
     name = recv_data[1]
     command = recv_data[2]
-    workingDirectory = recv_data[3]
+    working_directory = recv_data[3]
     print('ID:  ' + ID)
     print('Name:  ' + name)
     print('Command:  ' + command)
-    print('working Directory:' + workingDirectory)
+    print('working Directory:' + working_directory)
 
 def removeJob(sock, command, data): # tells server to remove job
     try:

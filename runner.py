@@ -39,20 +39,20 @@ def getJob(): # connectes and retrives a job from to server
     else:
         return None
 
-def runJob(name, command, workingDirectory=os.getcwd()): # runs the retrived job
+def runJob(name, command, working_directory=os.getcwd()): # runs the retrived job
     print('running: ', name)
-    orriginalWorkingDirectory=os.getcwd()
-    if workingDirectory != None:
-        print(workingDirectory)
+    original_working_directory=os.getcwd()
+    if working_directory != None:
+        print(working_directory)
         try:
-            os.chdir(workingDirectory)
+            os.chdir(working_directory)
 
         except:
             result = -9
         else:
             result = subprocess.call(command, shell=True)
         finally:
-            os.chdir(orriginalWorkingDirectory)
+            os.chdir(original_working_directory)
 
     else:
         result = subprocess.call(command, shell=True)
@@ -95,30 +95,30 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
 
 def configureLogging():
     # Set up logging
-    rootLogger = logging.getLogger(__name__)
+    root_logger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
-    fileLogOutput = logging.FileHandler('server.log')
+    file_log_output = logging.FileHandler('server.log')
 
     if debug == True:
-        rootLogger.setLevel(logging.DEBUG)
+        root_logger.setLevel(logging.DEBUG)
     else:
-        rootLogger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.INFO)
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # consoleLogStream.setFormatter(formatter)
-    fileLogOutput.setFormatter(formatter)
+    file_log_output.setFormatter(formatter)
 
-    # rootLogger.addHandler(consoleLogStream)
-    rootLogger.addHandler(fileLogOutput)
+    # root_logger.addHandler(consoleLogStream)
+    root_logger.addHandler(file_log_output)
 
-    return rootLogger
+    return root_logger
 
 if __name__ == "__main__":
     # Creates broadcast reciver
     server = socketserver.UDPServer(udpAddr, UDPhandler)
-    rootLogger = configureLogging()
-    rootLogger.info('test')
+    root_logger = configureLogging()
+    root_logger.info('test')
 
     # starts runner
     server.serve_forever()
