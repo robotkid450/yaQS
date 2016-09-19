@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 import asyncio
 import yaqs_queuemanger.yaqsQueue as yaqsQueue
 import json
@@ -70,7 +70,6 @@ class dataServerProtocol(asyncio.Protocol):
         root_logger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
             job_to_add = cmd_data
-            print(job_to_add)
             if job_to_add[3] !=0:
                 result = self.que.addJob(
                     job_to_add[0], job_to_add[1], job_to_add[2], job_to_add[3]
