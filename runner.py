@@ -12,12 +12,12 @@ tcpAddr = None
 
 debug = True
 
-def send_message(sock, command, data=''): # composes & sends messages
+def sendMessage(sock, command, data=''): # composes & sends messages
         data_to_encode = (command, data)
         data_to_send = json.dumps(data_to_encode)
         sock.send(data_to_send.encode())
 
-def recv_message(sock): # recives and decomposes messages
+def recvMessage(sock): # recives and decomposes messages
     data_to_decode = sock.recv(4096).decode()
     command, data = json.loads(data_to_decode)
     return command, data
@@ -25,8 +25,8 @@ def recv_message(sock): # recives and decomposes messages
 def getJob(): # connectes and retrives a job from to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
-    send_message(sock, 'getJobToRun')
-    command, data = recv_message(sock)
+    sendMessage(sock, 'getJobToRun')
+    command, data = recvMessage(sock)
     #print('data = ', data)
     if data != -1:
         recv_data = data
@@ -64,8 +64,8 @@ def runJob(name, command, working_directory=os.getcwd()): # runs the retrived jo
 def submitJobComplete(job_ID, job_result): # reports completed jobs to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
-    send_message(sock, 'submitJobComplete', [job_ID, job_result])
-    #reply = recv_message(sock)
+    sendMessage(sock, 'submitJobComplete', [job_ID, job_result])
+    #reply = recvMessage(sock)
     #print(reply)
 
 class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver

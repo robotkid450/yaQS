@@ -80,30 +80,30 @@ class dataServerProtocol(asyncio.Protocol):
                     job_to_add[0], job_to_add[1], job_to_add[2], None
                     )
             root_logger.info('added job : %s', job_to_add[0])
-            self.send_message(data=result)
+            self.sendMessage(data=result)
 
         elif command == 'getAllJobs': # gets all jobs currently in system
             root_logger.debug('getting jobs')
             all_jobs = self.que.getAllJobs()
-            self.send_message(data=all_jobs)
+            self.sendMessage(data=all_jobs)
 
         elif command == 'getJobInfo': # get all information on a job
             root_logger.debug('job info request')
             job_ID = cmd_data
             job_Info = self.que.getJobInfo(job_ID)
-            self.send_message(data=job_Info)
+            self.sendMessage(data=job_Info)
 
         elif command == 'removeJob': # removes a job from queue DOES NOT STOP
             job_ID = cmd_data        # RUNNING JOB!!
             root_logger.info('removing job:', job_ID)
             result = self.que.removeJob(job_ID)
-            self.send_message(data=result)
+            self.sendMessage(data=result)
 
         elif command == 'getJobToRun': # gets next job from queue
             root_logger.debug('Run job request')
             job_to_run = self.que.getJobToRun()
             root_logger.info('sending job: %s', job_to_run)
-            self.send_message(data=job_to_run)
+            self.sendMessage(data=job_to_run)
 
         elif command == 'submitJobComplete': # removes job from running list
             root_logger.info('Job submitted as complete.')
@@ -116,7 +116,7 @@ class dataServerProtocol(asyncio.Protocol):
 
         else:
             root_logger.warn('invalid command recived') # replies to invalid commands
-            self.send_message(data='invalid command')
+            self.sendMessage(data='invalid command')
 
         self.transport.close()
 
@@ -126,7 +126,7 @@ class dataServerProtocol(asyncio.Protocol):
 
 
     # helper functions
-    def send_message(self, command='reply', data=''):# composes & sends messages
+    def sendMessage(self, command='reply', data=''):# composes & sends messages
             data_to_encode = (command, data)
             data_to_send = json.dumps(data_to_encode)
             self.transport.write(data_to_send.encode())
