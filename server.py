@@ -18,7 +18,7 @@ server_addr = ('0.0.0.0', 9999) # production
 broadcast_addr = ('255.255.255.255', 9999) # production
 
 discovery_intreval = 10   # time in seconds between discovery broadcasrs
-workDispatch_intreval = 1 # time in seconds between workDispatch broadcasts
+work_dispatch_intreval = 1 # time in seconds between workDispatch broadcasts
 
 class UDPBroadcaster(object): # UDP broadcaster class
     """docstring for UDPBroadcaster"""
@@ -34,7 +34,7 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
     def sendWorkAvailable(self): # sends work avalible broadcast
         self.sock.sendto('work Available'.encode(), broadcast_addr)
-        rootLogger.debug('Sending work avalible.')
+        root_logger.debug('Sending work avalible.')
         self._stop()
 
     def _stop(self): # stops broadcast repeat loop
@@ -42,14 +42,14 @@ class UDPBroadcaster(object): # UDP broadcaster class
 
 def workDispatch(): # helper function for workDispatch broadcast
     if queue.getJobsAvailable() > 0:
-        rootLogger.debug('Work Avalibe')
-        UB = UDPBroadcaster()
-        UB.sendWorkAvailable()
+        root_logger.debug('Work Avalibe')
+        UDP_broadcaster = UDPBroadcaster()
+        UDP_broadcaster.sendWorkAvailable()
     return 0
 
 def discovery(): # helper function for discovery broadcast
-    UB = UDPBroadcaster()
-    UB.sendDiscovery()
+    UDP_broadcaster = UDPBroadcaster()
+    UDP_broadcaster.sendDiscovery()
     return 0
 
 
@@ -57,17 +57,17 @@ def discovery(): # helper function for discovery broadcast
 class dataServerProtocol(asyncio.Protocol):
     """docstring for MessageProtocol"""
     def connection_made(self, transport):
-        peername = transport.get_extra_info('peername')
-        rootLogger.info('Connection from {}'.format(peername))
+        peer_name = transport.get_extra_info('peer_name')
+        root_logger.info('Connection from {}'.format(peer_name))
         self.transport = transport
         self.que = queue
 
     def data_received(self, data):
         message = data.decode()
-        rootLogger.debug('Data received: {!r}'.format(message))
+        root_logger.debug('Data received: {!r}'.format(message))
         command, cmd_data = json.loads(message)
-        rootLogger.debug('command %s', command)
-        rootLogger.debug('cmd_data %s', cmd_data)
+        root_logger.debug('command %s', command)
+        root_logger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
             job_to_add = cmd_data
             print(job_to_add)
@@ -79,49 +79,49 @@ class dataServerProtocol(asyncio.Protocol):
                 result = self.que.addJob(
                     job_to_add[0], job_to_add[1], job_to_add[2], None
                     )
-            rootLogger.info('added job : %s', job_to_add[0])
+            root_logger.info('added job : %s', job_to_add[0])
             self.send_message(data=result)
 
         elif command == 'getAllJobs': # gets all jobs currently in system
-            rootLogger.debug('getting jobs')
+            root_logger.debug('getting jobs')
             all_jobs = self.que.getAllJobs()
             self.send_message(data=all_jobs)
 
         elif command == 'getJobInfo': # get all information on a job
-            rootLogger.debug('job info request')
+            root_logger.debug('job info request')
             job_ID = cmd_data
             job_Info = self.que.getJobInfo(job_ID)
             self.send_message(data=job_Info)
 
         elif command == 'removeJob': # removes a job from queue DOES NOT STOP
             job_ID = cmd_data        # RUNNING JOB!!
-            rootLogger.info('removing job:', job_ID)
+            root_logger.info('removing job:', job_ID)
             result = self.que.removeJob(job_ID)
             self.send_message(data=result)
 
         elif command == 'getJobToRun': # gets next job from queue
-            rootLogger.debug('Run job request')
+            root_logger.debug('Run job request')
             job_to_run = self.que.getJobToRun()
-            rootLogger.info('sending job: %s', job_to_run)
+            root_logger.info('sending job: %s', job_to_run)
             self.send_message(data=job_to_run)
 
         elif command == 'submitJobComplete': # removes job from running list
-            rootLogger.info('Job submitted as complete.')
+            root_logger.info('Job submitted as complete.')
             self.que.markRunningJobComplete(cmd_data[0])
 
         elif command == 'shutdown': # remotely kills server
-            rootLogger.info('Shutdown command recived.')
+            root_logger.info('Shutdown command recived.')
             self.transport.close()
             self.quitter()
 
         else:
-            rootLogger.warn('invalid command recived') # replies to invalid commands
+            root_logger.warn('invalid command recived') # replies to invalid commands
             self.send_message(data='invalid command')
 
         self.transport.close()
 
     def connection_lost(self, exc): # executed on connection loss
-        rootLogger.info('client disconnected')
+        root_logger.info('client disconnected')
         queue = self.que
 
 
@@ -154,29 +154,29 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
 
 def configureLogging():
     # Set up logging
-    rootLogger = logging.getLogger(__name__)
+    root_logger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
-    fileLogOutput = logging.FileHandler('server.log')
+    file_log_output = logging.FileHandler('server.log')
 
     if debug == True:
-        rootLogger.setLevel(logging.DEBUG)
+        root_logger.setLevel(logging.DEBUG)
     else:
-        rootLogger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # consoleLogStream.setFormatter(formatter)
-    fileLogOutput.setFormatter(formatter)
+    # consoleLogStream.setFormatter(logging_formatter)
+    file_log_output.setFormatter(logging_formatter)
 
-    # rootLogger.addHandler(consoleLogStream)
-    rootLogger.addHandler(fileLogOutput)
+    # root_logger.addHandler(consoleLogStream)
+    root_logger.addHandler(file_log_output)
 
-    return rootLogger
+    return root_logger
 
 if __name__ == '__main__':
 
     # run configure logging
-    rootLogger = configureLogging()
+    root_logger = configureLogging()
 
     # Create storage queue
     queue = yaqsQueue.QueueData()
@@ -184,26 +184,26 @@ if __name__ == '__main__':
     # Create asyncio loop
     loop = asyncio.get_event_loop()
     # Create data Server Coroutine
-    dataServerCoroutine = loop.create_server(
+    data_server_coroutine = loop.create_server(
         dataServerProtocol, server_addr[0], server_addr[1])
     # run data Server Coroutine
-    dataServer = loop.run_until_complete(dataServerCoroutine)
+    data_server = loop.run_until_complete(data_server_coroutine)
     # Create and run broadcasts
-    dispatchServer = PeriodicTask(workDispatch, workDispatch_intreval)
-    discoverServer = PeriodicTask(discovery, discovery_intreval)
+    dispatch_server = PeriodicTask(workDispatch, work_dispatch_intreval)
+    discover_server = PeriodicTask(discovery, discovery_intreval)
     # Send initial discovery broadcast
     discovery()
 
     # Serve requests until Ctrl+C is pressed
-    rootLogger.info('Serving on {}'.format(dataServer.sockets[0].getsockname()))
+    root_logger.info('Serving on {}'.format(data_server.sockets[0].getsockname()))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
         pass
-        rootLogger.info('Shutting down.')
+        root_logger.info('Shutting down.')
 
     # Close the server
-    dataServer.close()
+    data_server.close()
     dispatchServer._stop()
-    loop.run_until_complete(dataServer.wait_closed())
+    loop.run_until_complete(data_server.wait_closed())
     loop.close()
