@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-__version__ = '1.1.1'
+__version__ = '2.1.0'
 import socket
 import json
 import argparse
