@@ -14,7 +14,6 @@
 ### Server
   * Add arg to run under a different port.
   * Add debug option.
-  * Add working directory option.
   * Move to deamon.
 
 
@@ -31,10 +30,12 @@
   * add support for currently running list.
   * add to show-jobs commands.
   * add to job-info.
+  a* Add working directory option.
 
 ### Server
   * Remove completed bit.
   * Add currently running list.
+  * Add working directory option.
 
 
 ### Runner
