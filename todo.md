@@ -3,7 +3,7 @@
 ## In progress
 
 ### All
-  * Move to logging
+  * Move to logging.
 
 ### CLI
   * Move to OO class.
