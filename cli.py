@@ -25,6 +25,14 @@ def recvMessage(sock): # recives and decomposes messages
     data_to_decode = sock.recv(1024).decode()
     command, data = json.loads(data_to_decode)
     return command, data
+
+def listQueue(queue, queue_name):
+    print('%s:' % queue_name)
+    print('ID       | Name')
+    print('---------------')
+    for item in queue:
+        print(item[0]+ ' | '+ item[1])
+    print('---------------\n')
 # End helper function
 
 def getArgs(): # parses command line arguments + commands
@@ -91,27 +99,27 @@ def callComms(sock, args): # translates parsed args into network commands
         data = [args.name, args.shell_command, args.priortiy]
         data.append(args.working_directory)
         addJob(sock, command, data)
-        
+
     elif args.command == 'show-jobs' or args.command == 'jobs':
         command = 'getAllJobs'
         data = ''
         getAllJobs(sock, command, data)
-        
+
     elif args.command == 'job-info' or args.command == 'info':
         command = 'getJobInfo'
         data = args.jobID
         getJobInfo(sock, command, data)
-        
+
     elif args.command == 'remove-job' or args.command == 'remove':
         command = 'removeJob'
         data = args.jobID
         removeJob(sock, command, data)
-        
+
     elif args.command == 'shutdown':
         command = 'shutdown'
         data = ''
         shutdown(sock, command, data)
-        
+
     # elif args.command ==  or args.command == :
         # pass
     else:
@@ -144,38 +152,19 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     jobsFound = False
     if len(recv_data[0]) > 0:
         jobsFound = True
-        print('High priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[0]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[0], 'High priority')
 
     if len(recv_data[1]) > 0:
         jobsFound = True
-        print('Standard priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[1]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[1], 'Standard priority')
 
     if len(recv_data[2]) > 0:
         jobsFound = True
-        print('Low priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[2]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[2], 'Low priority')
+
     if len(recv_data[3]) > 0:
         jobsFound = True
-        print('Running:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[3]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[3], 'Running')
 
     if not jobsFound:
         print('No jobs currently queued or running.')
