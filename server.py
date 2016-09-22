@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-__version__ = '2.1.2'
+__version__ = '2.2.2'
 import asyncio
 import yaqs_queuemanger.yaqsQueue as yaqsQueue
 import json
