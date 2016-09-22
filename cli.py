@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-__version__ = '2.1.2'
+__version__ = '2.2.2'
 import socket
 import json
 import argparse
@@ -25,6 +25,14 @@ def recvMessage(sock): # recives and decomposes messages
     data_to_decode = sock.recv(1024).decode()
     command, data = json.loads(data_to_decode)
     return command, data
+
+def listQueue(queue, queue_name):
+    print('%s:' % queue_name)
+    print('ID       | Name')
+    print('---------------')
+    for item in queue:
+        print(item[0]+ ' | '+ item[1])
+    print('---------------\n')
 # End helper function
 
 def getArgs(): # parses command line arguments + commands
@@ -45,11 +53,11 @@ def getArgs(): # parses command line arguments + commands
         'shell_command', action='store', help='The command to be run'
         )
     add_job_parser.add_argument(
-        'working_directory', nargs='?', default=0, action='store',
+        '-w','--working-directory', nargs='?', default=0, action='store',
         help='The directory for the command to be run in.'
         )
     add_job_parser.add_argument(
-        'priortiy', nargs='?', type=int, default=2, action='store',
+        '-p','--priortiy', nargs='?', type=int, default=2, action='store',
         help='The jobs priority.'
         )
 
@@ -88,32 +96,30 @@ def callComms(sock, args): # translates parsed args into network commands
     # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
-        data = [args.name, args.shell_command]
-        try:
-            data.append(args.priority)
-        except AttributeError:
-            data.append(2)
-        try:
-            data.append(args.working_directory)
-        except AttributeError:
-            data.append(-1)
+        data = [args.name, args.shell_command, args.priortiy]
+        data.append(args.working_directory)
         addJob(sock, command, data)
+
     elif args.command == 'show-jobs' or args.command == 'jobs':
         command = 'getAllJobs'
         data = ''
         getAllJobs(sock, command, data)
+
     elif args.command == 'job-info' or args.command == 'info':
         command = 'getJobInfo'
         data = args.jobID
         getJobInfo(sock, command, data)
+
     elif args.command == 'remove-job' or args.command == 'remove':
         command = 'removeJob'
         data = args.jobID
         removeJob(sock, command, data)
+
     elif args.command == 'shutdown':
         command = 'shutdown'
         data = ''
         shutdown(sock, command, data)
+
     # elif args.command ==  or args.command == :
         # pass
     else:
@@ -146,38 +152,19 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     jobsFound = False
     if len(recv_data[0]) > 0:
         jobsFound = True
-        print('High Priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[0]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[0], 'High priority')
 
     if len(recv_data[1]) > 0:
         jobsFound = True
-        print('Standard priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[1]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[1], 'Standard priority')
 
     if len(recv_data[2]) > 0:
         jobsFound = True
-        print('Low priority:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[2]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[2], 'Low priority')
+
     if len(recv_data[3]) > 0:
         jobsFound = True
-        print('Running:')
-        print('ID       | Name')
-        print('---------------')
-        for item in recv_data[3]:
-            print(item[0]+ ' | '+ item[1])
-        print('---------------\n')
+        listQueue(recv_data[3], 'Running')
 
     if not jobsFound:
         print('No jobs currently queued or running.')
