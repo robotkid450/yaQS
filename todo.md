@@ -22,9 +22,9 @@
 ### Runner
   * Add arg to run under a different port.
   * Add debug option.
-  * Add working directory option.
   * Add command output (real-time and post completion).
   * Add multi-user capability.
+  * Move to deamon.
 
 ## Completed
 
