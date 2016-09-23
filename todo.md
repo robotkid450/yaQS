@@ -10,7 +10,6 @@
   * Add arg to run under a different port.
   * Add debug option.
   * Add multi server support.
-  * Add working directory to job info.
   * Add find by job name.
 
 ### Server
