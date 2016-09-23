@@ -17,6 +17,7 @@
   * Add arg to run under a different port.
   * Add debug option.
   * Move to deamon.
+  * Add find job by name.
 
 
 ### Runner
