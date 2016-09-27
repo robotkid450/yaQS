@@ -148,6 +148,14 @@ class QueueData(object): # base object of queue managment
         else:
             return 0
 
+class Job(object):
+    def __init__(self, job_ID, job_name, command, working_directory):
+        self.id = job_ID
+        self.name = job_name
+        self.command = command
+        self.wDirectory = working_directory
+
+
 if __name__ == '__main__':
     # test code
     q = QueueData()
