@@ -154,6 +154,13 @@ class Job(object):
         self.name = job_name
         self.command = command
         self.wDirectory = working_directory
+        
+    def modJob(self):
+        pass
+    
+    def getInfo(self):
+        info = [self.id, self.name, self.command, self.wDirectory]
+        return info
 
 if __name__ == '__main__':
     # test code
