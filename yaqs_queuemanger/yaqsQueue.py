@@ -1,7 +1,7 @@
 from collections import deque
 import uuid
 
-__version__ = 1.0
+__version__ = 2.0
 
 class QueueData(object): # base object of queue managment
     """docstring for QueueData
@@ -147,6 +147,13 @@ class QueueData(object): # base object of queue managment
             return -1
         else:
             return 0
+
+class Job(object):
+    def __init__(self, job_ID, job_name, command, working_directory):
+        self.id = job_ID
+        self.name = job_name
+        self.command = command
+        self.wDirectory = working_directory
 
 if __name__ == '__main__':
     # test code
