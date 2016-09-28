@@ -14,6 +14,10 @@ class QueueData(object): # base object of queue managment
         self.runningJobs = []   #Creates running job list
         self.jobsAvailable = 0  #Counter of currently avalible jobs
 
+    def uuidGen(self):
+        job_uuid = [str(uuid.uuid4())[:8]
+        return job_uuid
+
     def pickleCurrentQueue(self, db): # will be implemted later
         return 0
 
@@ -23,7 +27,8 @@ class QueueData(object): # base object of queue managment
     def addJob(self, jobName, command, priority, workingDirectory): #adds a job to specified que
         # and increments jobsAvailable by 1
         if priority == 1:
-            self.HPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
+            job_uuid=str(uuid.uuid4())[:8]
+            self.HPque.append(uuidGen(), jobName, command, workingDirectory])
             self.jobsAvailable += 1
             return 0
         elif priority == 2:
@@ -154,10 +159,12 @@ class Job(object):
         self.name = job_name
         self.command = command
         self.wDirectory = working_directory
-        
-    def modJob(self):
-        pass
-    
+
+    def modJob(self, name=self.name, command=self.command, wDirectory=self.wDirectory):
+        self.name = name
+        self.command = command
+        self.wDirectory = wDirectory
+
     def getInfo(self):
         info = [self.id, self.name, self.command, self.wDirectory]
         return info
