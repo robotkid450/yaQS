@@ -1,9 +1,12 @@
 import yaqsQueue
 from sys import exit
 
-q = queue.QueueData()  #create que obj
+q = yaqsQueue.QueueData()  #create que obj
 
-HP_test_1_add = q.addJob('HPtest', 'bash', 1) # add a serise of test jobs
+q.addJob('name', 'command', 1, 'workingDirectory')
+print(q.HPque)
+
+'''HP_test_1_add = q.addJob('HPtest', 'bash', 1) # add a serise of test jobs
 if not HP_test_1_add  == 0:
     exit(-1)
 
@@ -43,3 +46,4 @@ if job_info == -1:
 remove_job_return_code = q.removeJob(first_job_in_HPque)
 if remove_job_return_code == -1:
     exit(-1)
+'''

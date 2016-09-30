@@ -3,6 +3,8 @@ import uuid
 
 __version__ = 2.0
 
+MISSING = object()
+
 class QueueData(object): # base object of queue managment
     """docstring for QueueData
        This is a basic multi-priority job queueing system."""
@@ -14,23 +16,20 @@ class QueueData(object): # base object of queue managment
         self.runningJobs = []   #Creates running job list
         self.jobsAvailable = 0  #Counter of currently avalible jobs
 
-    def uuidGen(self):
-        job_uuid = [str(uuid.uuid4())[:8]
+    def uuidGen(self): #creates an 8 char long id
+        job_uuid = str(uuid.uuid4())[:8]
         return job_uuid
-
-    def pickleCurrentQueue(self, db): # will be implemted later
-        return 0
-
-    def unPickleCurrentQueue(self, db): # will be implemted later
-        return 0
 
     def addJob(self, jobName, command, priority, workingDirectory): #adds a job to specified que
         # and increments jobsAvailable by 1
-        job_uuid=str(uuid.uuid4())[:8]
-        job = Job()
-
+        job = Job(self.uuidGen(), jobName, command, workingDirectory)
         if priority == 1:
-            self.HPque.append(uuidGen(), jobName, command, workingDirectory])
+            self.HPque.append(job)
+            self.runningJobs += 1
+            return 0
+
+        '''if priority == 1:
+            self.HPque.append([uuidGen(), jobName, command, workingDirectory])
             self.jobsAvailable += 1
             return 0
         elif priority == 2:
@@ -42,7 +41,7 @@ class QueueData(object): # base object of queue managment
             self.jobsAvailable += 1
             return 0
         else:
-            return -1
+            return -1'''
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
         for item in self.HPque:
@@ -161,13 +160,18 @@ class Job(object):
         self.name = job_name
         self.command = command
         self.wDirectory = working_directory
+        return None
 
-    def modJob(self, name=self.name, command=self.command, wDirectory=self.wDirectory):
-        self.name = name
-        self.command = command
-        self.wDirectory = wDirectory
+    def mod_job(self, name=MISSING, command=MISSING, wDirectory=MISSING):
+        if name != MISSING:
+            self.name = name
+        if command != MISSING:
+            self.command = command
+        if wDirectory != MISSING:
+            self.wDirectory = wDirectory
+        return 0
 
-    def getInfo(self):
+    def get_info(self):
         info = [self.id, self.name, self.command, self.wDirectory]
         return info
 
