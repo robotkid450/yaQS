@@ -20,28 +20,27 @@ class QueueData(object): # base object of queue managment
         job_uuid = str(uuid.uuid4())[:8]
         return job_uuid
 
-    def addJob(self, jobName, command, priority, workingDirectory): #adds a job to specified que
-        # and increments jobsAvailable by 1
+    def addJob(self, jobName, command, priority, workingDirectory):
+        #adds a job to specified que
+        #and increments jobsAvailable by 1
         job = Job(self.uuidGen(), jobName, command, workingDirectory)
         if priority == 1:
             self.HPque.append(job)
-            self.runningJobs += 1
+            self.jobsAvailable += 1
             return 0
 
-        '''if priority == 1:
-            self.HPque.append([uuidGen(), jobName, command, workingDirectory])
-            self.jobsAvailable += 1
-            return 0
         elif priority == 2:
-            self.SPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
+            self.SPque.append(job)
             self.jobsAvailable += 1
             return 0
+
         elif priority == 3:
-            self.LPque.append([str(uuid.uuid4())[:8], jobName, command, workingDirectory])
+            self.LPque.append(job)
             self.jobsAvailable += 1
             return 0
+
         else:
-            return -1'''
+            return -1
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
         for item in self.HPque:
