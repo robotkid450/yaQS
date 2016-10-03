@@ -43,8 +43,13 @@ class QueueData(object): # base object of queue managment
             return -1
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
+        jobInfo = []
         for item in self.HPque:
-            if item[0] == jobID:
+            if item.id == jobID:
+                jobInfo.append(item.name)
+                jobInfo.append(item.command)
+                jobInfo.append(item.id)
+                jobInfo.append(item.wDirectory)
                 return item
             else:
                 pass
