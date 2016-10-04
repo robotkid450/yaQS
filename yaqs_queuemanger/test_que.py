@@ -15,3 +15,6 @@ print('sp : ', q.getJobInfo(spID))
 print('lp ; ', q.getJobInfo(lpID))
 
 print('all jobs', q.getAllJobs())
+
+q.removeJob(hpID)
+print('all jobs', q.getAllJobs())
