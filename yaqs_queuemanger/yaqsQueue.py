@@ -46,21 +46,17 @@ class QueueData(object): # base object of queue managment
         jobInfo = []
         for item in self.HPque:
             if item.id == jobID:
-                jobInfo.append(item.name)
-                jobInfo.append(item.command)
-                jobInfo.append(item.id)
-                jobInfo.append(item.wDirectory)
-                return item
+                return item.getInfo()
             else:
                 pass
         for item in self.SPque:
-                if item[0] == jobID:
-                    return item
+                if item.id == jobID:
+                    return item.getInfo()
                 else:
                     pass
         for item in self.LPque:
-            if item[0] == jobID:
-                return item
+            if item.id == jobID:
+                return item.getInfo()
             else:
                 pass
         else:
@@ -166,7 +162,7 @@ class Job(object):
         self.wDirectory = working_directory
         return None
 
-    def mod_job(self, name=MISSING, command=MISSING, wDirectory=MISSING):
+    def modJob(self, name=MISSING, command=MISSING, wDirectory=MISSING):
         if name != MISSING:
             self.name = name
         if command != MISSING:
@@ -175,7 +171,7 @@ class Job(object):
             self.wDirectory = wDirectory
         return 0
 
-    def get_info(self):
+    def getInfo(self):
         info = [self.id, self.name, self.command, self.wDirectory]
         return info
 
