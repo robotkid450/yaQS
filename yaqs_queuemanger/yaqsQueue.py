@@ -43,7 +43,6 @@ class QueueData(object): # base object of queue managment
             return -1
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
-        jobInfo = []
         for item in self.HPque:
             if item.id == jobID:
                 return item.getInfo()
@@ -70,16 +69,16 @@ class QueueData(object): # base object of queue managment
         jobsRN = [] #runnig jobs
 
         for item in self.HPque:                 #These loop through ques
-            jobsHP.append([item[0], item[1]])   #and extract the job name
+            jobsHP.append([item.id, item.name])   #and extract the job name
                                                 #plus the jobs ID
         for item in self.SPque:
-            jobsSP.append([item[0], item[1]])
+            jobsSP.append([item.id, item.name])
 
         for item in self.LPque:
-            jobsLP.append([item[0], item[1]])
+            jobsLP.append([item.id, item.name])
 
         for item in self.runningJobs:
-            jobsRN.append([item[0], item[1]])
+            jobsRN.append([item.id, item.name])
         jobs = [jobsHP, jobsSP, jobsLP, jobsRN]
         return jobs
 

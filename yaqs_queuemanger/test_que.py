@@ -14,3 +14,4 @@ print('hp : ', q.getJobInfo(hpID))
 print('sp : ', q.getJobInfo(spID))
 print('lp ; ', q.getJobInfo(lpID))
 
+print('all jobs', q.getAllJobs())
