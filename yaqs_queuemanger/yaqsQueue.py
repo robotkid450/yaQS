@@ -67,7 +67,7 @@ class QueueData(object): # base object of queue managment
         jobsHP = [] #High priority jobs
         jobsSP = [] #standard priority jobs
         jobsLP = [] #Low priority jobs
-        jobsRN = []
+        jobsRN = [] #runnig jobs
 
         for item in self.HPque:                 #These loop through ques
             jobsHP.append([item[0], item[1]])   #and extract the job name
