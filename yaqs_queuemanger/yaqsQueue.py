@@ -87,7 +87,7 @@ class QueueData(object): # base object of queue managment
         found = False
 
         for item in self.HPque:
-            if item[0] == jobID:
+            if item.id == jobID:
                 self.HPque.remove(item)
                 found = True
                 break
@@ -95,7 +95,7 @@ class QueueData(object): # base object of queue managment
                 pass
 
         for item in self.SPque:
-            if item[0] == jobID:
+            if item.id == jobID:
                 self.SPque.remove(item)
                 found = True
                 break
@@ -103,7 +103,7 @@ class QueueData(object): # base object of queue managment
                 pass
 
         for item in self.LPque:
-            if item[0] == jobID:
+            if item.id == jobID:
                 self.LPque.remove(item)
                 found = True
                 break
@@ -143,7 +143,7 @@ class QueueData(object): # base object of queue managment
     def markRunningJobComplete(self, job_ID): # marks a running job as completed
         try:
             for item in self.runningJobs:
-                if item[0] == job_ID:
+                if item.id == job_ID:
                     self.runningJobs.remove(item)
                     break
                 else:
