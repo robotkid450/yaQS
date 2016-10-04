@@ -135,7 +135,7 @@ class QueueData(object): # base object of queue managment
             return -1
         self.jobsAvailable -= 1
         self.runningJobs.append(job_to_run)
-        return job_to_run
+        return job_to_run.getInfo()
 
     def getJobsAvailable(self): # returns nuber of jobs avalible
         return self.jobsAvailable
