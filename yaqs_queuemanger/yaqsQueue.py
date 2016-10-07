@@ -1,6 +1,8 @@
 from collections import deque
 import uuid
 
+import pdb
+
 __version__ = 2.1
 
 MISSING = object()
@@ -49,31 +51,23 @@ class QueueData(object): # base object of queue managment
             return -1
 
     def getAllJobs(self):   #Gets all job names + IDs
+        jobs = []
 
-        jobsHP = [] #High priority jobs
-        jobsSP = [] #standard priority jobs
-        jobsLP = [] #Low priority jobs
-        jobsRN = [] #runnig jobs
+        for item in self.queues:
+            for item in item:
+                jobs.append([item.id, item.name])
 
-        for item in self.HPque:                 #These loop through ques
-            jobsHP.append([item.id, item.name])   #and extract the job name
-                                                #plus the jobs ID
-        for item in self.SPque:
-            jobsSP.append([item.id, item.name])
-
-        for item in self.LPque:
-            jobsLP.append([item.id, item.name])
-
-        for item in self.runningJobs:
-            jobsRN.append([item.id, item.name])
-        jobs = [jobsHP, jobsSP, jobsLP, jobsRN]
-        return jobs
+        return jobsT
 
     def removeJob(self, jobID): #Removes a job from que and decrements jobs
                                 #avalible by 1
         found = False
-
-        for item in self.HPque:
+        
+        for item in self.queues:
+            for item in item:
+                if item.id == jobID:
+                    
+        '''for item in self.HPque:
             if item.id == jobID:
                 self.HPque.remove(item)
                 found = True
@@ -101,7 +95,7 @@ class QueueData(object): # base object of queue managment
             return -1
         else:
             self.jobsAvailable -= 1
-            return 0
+            return 0'''
 
     def modJob(self, jobID, job, command, priority): # will be implemted later
         return 0
