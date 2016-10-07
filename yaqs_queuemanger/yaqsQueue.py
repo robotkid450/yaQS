@@ -10,10 +10,15 @@ class QueueData(object): # base object of queue managment
        This is a basic multi-priority job queueing system."""
 
     def __init__(self):
-        self.HPque = deque()    #Creates high priority que
-        self.SPque = deque()    #Creates standard priority que
-        self.LPque = deque()    #Creates low priority que
-        self.runningJobs = []   #Creates running job list
+        HPque = deque()     #Creates high priority que
+        SPque = deque()     #Creates standard priority que
+        LPque = deque()     #Creates low priority que
+        runningJobs = []    #Creates running job list
+        self.queues = []    #Creates container for queues
+        self.queues.append(HPque)
+        self.queues.append(SPque)
+        self.queues.append(LPque)
+        self.queues.append(runningJobs)
         self.jobsAvailable = 0  #Counter of currently avalible jobs
 
     def uuidGen(self): #creates an 8 char long id
@@ -24,40 +29,22 @@ class QueueData(object): # base object of queue managment
         #adds a job to specified que
         #and increments jobsAvailable by 1
         job = Job(self.uuidGen(), jobName, command, workingDirectory)
-        if priority == 1:
-            self.HPque.append(job)
-            self.jobsAvailable += 1
+        try:
+            self.queues[priority-1].append(job)
+            self.jobsAvailable +=1
             return 0
-
-        elif priority == 2:
-            self.SPque.append(job)
-            self.jobsAvailable += 1
-            return 0
-
-        elif priority == 3:
-            self.LPque.append(job)
-            self.jobsAvailable += 1
-            return 0
-
-        else:
+        except:
             return -1
 
+
     def getJobInfo(self, jobID):    # Retrives a jobs info
-        for item in self.HPque:
-            if item.id == jobID:
-                return item.getInfo()
-            else:
-                pass
-        for item in self.SPque:
+    
+        for item in self.queues:
+            for item in item:
                 if item.id == jobID:
                     return item.getInfo()
                 else:
                     pass
-        for item in self.LPque:
-            if item.id == jobID:
-                return item.getInfo()
-            else:
-                pass
         else:
             return -1
 
