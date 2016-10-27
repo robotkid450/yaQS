@@ -57,16 +57,24 @@ class QueueData(object): # base object of queue managment
             for item in item:
                 jobs.append([item.id, item.name])
 
-        return jobsT
+        return jobs
 
     def removeJob(self, jobID): #Removes a job from que and decrements jobs
                                 #avalible by 1
         found = False
         
         for item in self.queues:
+            que = item
             for item in item:
                 if item.id == jobID:
+                    found = True
+                    job_to_remove =item
                     
+            if found:
+                que.remove(job_to_remove)
+                break
+            else:
+                pass
         '''for item in self.HPque:
             if item.id == jobID:
                 self.HPque.remove(item)
