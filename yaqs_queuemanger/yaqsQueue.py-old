@@ -87,42 +87,32 @@ class QueueData(object): # base object of queue managment
     def getJobToRun(self): # retrives next job based on input order & priority
         # & decerements jobs avalible by 1
         # returns -1 if no jobs are available
-       for item in self.queues:
-           if len(item) != 0:
+        for item in self.queues:
+            if len(item) != 0:
                job_to_run = item.pop()
-               self.runningJobs.append(job_to_run)
+               self.queues[3].append(job_to_run)
                self.jobsAvailable -= 1
                return job_to_run.getInfo()
 
             else:
+                pass
 
-        
-       '''if len(self.HPque) != 0:
-            job_to_run = self.HPque.pop()
-
-        elif len(self.SPque) != 0:
-            job_to_run = self.SPque.pop()
-
-        elif len(self.LPque) != 0:
-            job_to_run = self.LPque.pop()
-
-        else:
-            return -1
-        self.jobsAvailable -= 1
-        self.runningJobs.append(job_to_run)
-        return job_to_run.getInfo()'''
+        return -1
 
     def getJobsAvailable(self): # returns nuber of jobs avalible
         return self.jobsAvailable
 
     def markRunningJobComplete(self, job_ID): # marks a running job as completed
         try:
-            for item in self.runningJobs:
+            print(self.queues)
+            for item in self.queues[3]:
+                print(item.id)
                 if item.id == job_ID:
-                    self.runningJobs.remove(item)
+                    print('found')
+                    self.queues[3].remove(item)
                     break
-                else:
-                    pass
+                #else:
+                #   pass
         except:
             return -1
         else:

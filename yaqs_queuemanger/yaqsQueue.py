@@ -103,14 +103,14 @@ class QueueData(object): # base object of queue managment
         return self.jobsAvailable
 
     def markRunningJobComplete(self, job_ID): # marks a running job as completed
-        try:
-            for item in self.runningJobs:
-                if item.id == job_ID:
-                    self.runningJobs.remove(item)
-                    break
-                else:
-                    pass
-        except:
+        found = False
+        for item in self.queues[3]:
+            if item.id == job_ID:
+                found = True
+                self.queues[3].remove(item)
+                break
+       
+        if not found:
             return -1
         else:
             return 0
