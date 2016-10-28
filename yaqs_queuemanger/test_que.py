@@ -20,3 +20,5 @@ jid = jobs[0][0]
 print("jid :", jid)
 q.removeJob(jid)
 print('all jobs', q.getAllJobs())
+jobToRun = q.getJobToRun()
+print('Job to run: ', jobToRun)
