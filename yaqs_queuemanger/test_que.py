@@ -19,6 +19,4 @@ print(jobs)
 jid = jobs[0][0]
 print("jid :", jid)
 q.removeJob(jid)
-# q.removeJob(str(jid))
-# q.removeJob(hpID)
-# print('all jobs', q.getAllJobs())
+print('all jobs', q.getAllJobs())

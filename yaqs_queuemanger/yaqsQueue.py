@@ -72,38 +72,14 @@ class QueueData(object): # base object of queue managment
                     
             if found:
                 que.remove(job_to_remove)
-                break
-            else:
-                pass
-        '''for item in self.HPque:
-            if item.id == jobID:
-                self.HPque.remove(item)
-                found = True
-                break
-            else:
-                pass
-
-        for item in self.SPque:
-            if item.id == jobID:
-                self.SPque.remove(item)
-                found = True
-                break
-            else:
-                pass
-
-        for item in self.LPque:
-            if item.id == jobID:
-                self.LPque.remove(item)
-                found = True
+                self.jobsAvailable -= 1
+                return 0
                 break
             else:
                 pass
 
         if not found:
             return -1
-        else:
-            self.jobsAvailable -= 1
-            return 0'''
 
     def modJob(self, jobID, job, command, priority): # will be implemted later
         return 0
