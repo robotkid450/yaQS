@@ -121,6 +121,7 @@ class Job(object):
         self.name = job_name
         self.command = command
         self.wDirectory = working_directory
+        self.commandResult = None
         return None
 
     def modJob(self, name=MISSING, command=MISSING, wDirectory=MISSING):
