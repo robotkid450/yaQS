@@ -16,11 +16,13 @@ class QueueData(object): # base object of queue managment
         SPque = deque()     #Creates standard priority que
         LPque = deque()     #Creates low priority que
         runningJobs = []    #Creates running job list
+        finishedJobs = []   #Creates comtainer to store completed jobs
         self.queues = []    #Creates container for queues
         self.queues.append(HPque)
         self.queues.append(SPque)
         self.queues.append(LPque)
         self.queues.append(runningJobs)
+        self.queues.append(finishedJobs)
         self.jobsAvailable = 0  #Counter of currently avalible jobs
 
     def uuidGen(self): #creates an 8 char long id
@@ -40,7 +42,6 @@ class QueueData(object): # base object of queue managment
 
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
-    
         for item in self.queues:
             for item in item:
                 if item.id == jobID:
@@ -102,11 +103,13 @@ class QueueData(object): # base object of queue managment
     def getJobsAvailable(self): # returns nuber of jobs avalible
         return self.jobsAvailable
 
-    def markRunningJobComplete(self, job_ID): # marks a running job as completed
+    def markRunningJobComplete(self, job_ID, result=None): # marks a running job as completed
         found = False
         for item in self.queues[3]:
             if item.id == job_ID:
                 found = True
+                item.appendResult(result)
+                self.queues[4].append(item)
                 self.queues[3].remove(item)
                 break
        
@@ -136,6 +139,10 @@ class Job(object):
     def getInfo(self):
         info = [self.id, self.name, self.command, self.wDirectory]
         return info
+
+    def appendResult(self, result):
+        self.commandResult = result
+        return 0
 
 if __name__ == '__main__':
     # test code
