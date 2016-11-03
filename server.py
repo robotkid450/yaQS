@@ -106,7 +106,7 @@ class dataServerProtocol(asyncio.Protocol):
 
         elif command == 'submitJobComplete': # removes job from running list
             root_logger.info('Job submitted as complete.')
-            self.que.markRunningJobComplete(cmd_data[0])
+            self.que.markRunningJobComplete(cmd_data[0], cmd_data[1])
 
         elif command == 'shutdown': # remotely kills server
             root_logger.info('Shutdown command recived.')

@@ -58,6 +58,7 @@ class QueueData(object): # base object of queue managment
             for item in item:
                 jobs.append([item.id, item.name])
 
+        print('jobs :', jobs)
         return jobs
 
     def removeJob(self, jobID): #Removes a job from que and decrements jobs
