@@ -22,5 +22,6 @@ q.removeJob(jid)
 print('all jobs', q.getAllJobs())
 jobToRun = q.getJobToRun()
 print('Job to run: ', jobToRun)
-print('marking as complete ',q.markRunningJobComplete(jobToRun[0]))
-#print('marking as complete ',q.markRunningJobComplete('asd'))
+print('marking as complete ',q.markRunningJobComplete(jobToRun[0], 'asdf'))
+
+print('result :', q.queues[4][0].commandResult)
