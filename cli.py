@@ -150,6 +150,11 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
         return -1
     command , recv_data = recvMessage(sock)
     jobsFound = False
+    
+    if len(recv_data[3]) > 0:
+        jobsFound = True
+        listQueue(recv_data[3], 'Running')
+    
     if len(recv_data[0]) > 0:
         jobsFound = True
         listQueue(recv_data[0], 'High priority')
@@ -161,10 +166,11 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     if len(recv_data[2]) > 0:
         jobsFound = True
         listQueue(recv_data[2], 'Low priority')
-
-    if len(recv_data[3]) > 0:
+    
+    
+    if len(recv_data[4]) > 0:
         jobsFound = True
-        listQueue(recv_data[3], 'Running')
+        listQueue(recv_data[4], 'Finished')
 
     if not jobsFound:
         print('No jobs currently queued or running.')
