@@ -154,7 +154,7 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     if len(recv_data[3]) > 0:
         jobsFound = True
         listQueue(recv_data[3], 'Running')
-    
+
     if len(recv_data[0]) > 0:
         jobsFound = True
         listQueue(recv_data[0], 'High priority')
@@ -166,7 +166,6 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     if len(recv_data[2]) > 0:
         jobsFound = True
         listQueue(recv_data[2], 'Low priority')
-    
     
     if len(recv_data[4]) > 0:
         jobsFound = True
@@ -187,10 +186,19 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     name = recv_data[1]
     command = recv_data[2]
     working_directory = recv_data[3]
-    print('ID:  ' + ID)
-    print('Name:  ' + name)
-    print('Command:  ' + command)
-    print('working Directory:' + working_directory)
+    result = recv_data[4]
+    print('ID:  ' , ID)
+
+    print('Name:  ' , name)
+
+    print('Command:  ' , command)
+    
+    if working_directory != None:
+        print('working Directory:' , working_directory)
+    
+    if result != None:
+        print('result :' , result)
+
 
 def removeJob(sock, command, data): # tells server to remove job
     try:
