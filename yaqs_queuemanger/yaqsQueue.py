@@ -140,7 +140,9 @@ class Job(object):
         return 0
 
     def getInfo(self):
-        info = [self.id, self.name, self.command, self.wDirectory]
+        info = [
+            self.id, self.name, self.command, self.wDirectory, self.commandResult
+            ]
         return info
 
     def appendResult(self, result):
