@@ -55,8 +55,10 @@ class QueueData(object): # base object of queue managment
         jobs = []
 
         for item in self.queues:
+            queContents = []
             for item in item:
-                jobs.append([item.id, item.name])
+                queContents.append([item.id, item.name])
+            jobs.append(queContents)
 
         print('jobs :', jobs)
         return jobs
