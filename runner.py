@@ -50,14 +50,19 @@ def runJob(name, command, working_directory=os.getcwd()): # runs the retrived jo
         except:
             result = -9
         else:
-            result = subprocess.call(command, shell=True)
+            try :
+                result = subprocess.check_output(command, shell=True)
+                print(result)
+            except:
+                result = -8
+
         finally:
             os.chdir(original_working_directory)
 
     else:
-        result = subprocess.call(command, shell=True)
+        result = subprocess.check_output(command, shell=True)
 
-    return result
+    return result.decode('utf-8')
 
 
 
