@@ -201,6 +201,5 @@ if __name__ == '__main__':
 
     # Close the server
     data_server.close()
-    dispatchServer._stop()
     loop.run_until_complete(data_server.wait_closed())
     loop.close()
