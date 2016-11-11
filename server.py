@@ -128,11 +128,6 @@ class dataServerProtocol(asyncio.Protocol):
 
 
     # helper functions
-    def sendMessage(self, command='reply', data=''):# composes & sends messages
-            data_to_encode = (command, data)
-            data_to_send = json.dumps(data_to_encode)
-            self.transport.write(data_to_send.encode())
-
     def quitter(self): # helper funcyion for shutdown command
         loop.stop()
 
