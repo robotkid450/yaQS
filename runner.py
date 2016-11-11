@@ -2,7 +2,8 @@
 
 __version__ = '2.3.2'
 import socketserver, socket
-import json
+import yaqs.protocol as protocol
+#import json
 import subprocess
 import logging
 import os
@@ -12,21 +13,22 @@ tcpAddr = None
 
 debug = True
 
-def sendMessage(sock, command, data=''): # composes & sends messages
-        data_to_encode = (command, data)
-        data_to_send = json.dumps(data_to_encode)
-        sock.send(data_to_send.encode())
+'''def sendMessage(sock, command, data=''): # composes & sends messages
+    data_to_encode = (command, data)
+    data_to_send = json.dumps(data_to_encode)
+    sock.send(data_to_send.encode())
 
 def recvMessage(sock): # recives and decomposes messages
     data_to_decode = sock.recv(4096).decode()
     command, data = json.loads(data_to_decode)
-    return command, data
+    return command, data'''
 
 def getJob(): # connectes and retrives a job from to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
-    sendMessage(sock, 'getJobToRun')
-    command, data = recvMessage(sock)
+    conn = protocol.Client(sock)
+    conn.sendMessage('getJobToRun')
+    command, data = conn.recvMessage()
     #print('data = ', data)
     if data != -1:
         recv_data = data
@@ -69,8 +71,9 @@ def runJob(name, command, working_directory=os.getcwd()): # runs the retrived jo
 def submitJobComplete(job_ID, job_result): # reports completed jobs to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
-    sendMessage(sock, 'submitJobComplete', [job_ID, job_result])
-    #reply = recvMessage(sock)
+    conn = protocol.Client(sock)
+    conn.sendMessage('submitJobComplete', [job_ID, job_result])
+    #reply = recvMessage()
     #print(reply)
 
 class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
