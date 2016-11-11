@@ -5,7 +5,7 @@ import struct
 import json
 
 
-class Protocol:
+class Client:
 
     def __init__(self, sock):
         self.sock= sock
@@ -46,3 +46,33 @@ class Protocol:
         data_to_decode = self._recv_msg()
         command, data = json.loads(data_to_decode.decode())
         return command, data
+
+class Server:
+    def __init__(self, transport, data):
+        self.data = data
+        self.trans = transport
+   
+    def _send_msg(self, msg):
+        # Prefix each message with a 4-byte length (network byte order)
+        msg = struct.pack('>I', len(msg)) + msg
+        self.trans.write(msg)
+
+    def _recv_msg(self, packed_message):
+        # Read message length and unpack it into an integer
+        msglen = struct.unpack('>I', packed_message[:4])[0]
+        if not msglen:
+            return None
+        msg = packed_message[4:msglen+4]
+        return msg
+
+    def sendMessage(self, command='reply', data=''): # composes & sends messages
+        data_to_json = (command, data)
+        data_to_send = json.dumps(data_to_json)
+        self._send_msg(data_to_send.encode())
+
+
+    def recvMessage(self): # recives and decomposes messages
+        data_to_decode = self._recv_msg(self.data)
+        command, data = json.loads(data_to_decode.decode())
+        return command, data
+

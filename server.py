@@ -4,7 +4,8 @@
 __version__ = '2.3.2'
 import asyncio
 import yaqs.queue as yaqsQueue
-import json
+import yaqs.protocol as protocol
+#import json
 import sys
 import socket
 import logging
@@ -63,9 +64,10 @@ class dataServerProtocol(asyncio.Protocol):
         self.que = queue
 
     def data_received(self, data):
-        message = data.decode()
-        root_logger.debug('Data received: {!r}'.format(message))
-        command, cmd_data = json.loads(message)
+        conn = protocol.Server(self.transport, data)
+        command, cmd_data = conn.recvMessage()
+        #root_logger.debug('Data received: {!r}'.format(message))
+        #command, cmd_data = json.loads(message)
         root_logger.debug('command %s', command)
         root_logger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
@@ -79,30 +81,30 @@ class dataServerProtocol(asyncio.Protocol):
                     job_to_add[0], job_to_add[1], job_to_add[2], None
                     )
             root_logger.info('added job : %s', job_to_add[0])
-            self.sendMessage(data=result)
+            conn.sendMessage(data=result)
 
         elif command == 'getAllJobs': # gets all jobs currently in system
             root_logger.debug('getting jobs')
             all_jobs = self.que.getAllJobs()
-            self.sendMessage(data=all_jobs)
+            conn.sendMessage(data=all_jobs)
 
         elif command == 'getJobInfo': # get all information on a job
             root_logger.debug('job info request')
             job_ID = cmd_data
             job_Info = self.que.getJobInfo(job_ID)
-            self.sendMessage(data=job_Info)
+            conn.sendMessage(data=job_Info)
 
         elif command == 'removeJob': # removes a job from queue
             job_ID = cmd_data        # DOES NOT STOP RUNNING JOB!!
             root_logger.info('removing job: %s', job_ID)
             result = self.que.removeJob(job_ID)
-            self.sendMessage(data=result)
+            conn.sendMessage(data=result)
 
         elif command == 'getJobToRun': # gets next job from queue
             root_logger.debug('Run job request')
             job_to_run = self.que.getJobToRun()
             root_logger.info('sending job: %s', job_to_run)
-            self.sendMessage(data=job_to_run)
+            conn.sendMessage(data=job_to_run)
 
         elif command == 'submitJobComplete': # removes job from running list
             root_logger.info('Job submitted as complete.')
@@ -116,7 +118,7 @@ class dataServerProtocol(asyncio.Protocol):
 
         else:
             root_logger.warn('invalid command recived') # replies to invalid commands
-            self.sendMessage(data='invalid command')
+            conn.sendMessage(data='invalid command')
 
         self.transport.close()
 

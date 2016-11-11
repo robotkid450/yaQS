@@ -2,9 +2,10 @@
 
 __version__ = '2.3.2'
 import socket
-import json
+#import json
 import argparse
 import sys
+import yaqs.protocol as protocol
 # Define needed global variables
 
 server_addr = None
@@ -16,7 +17,7 @@ server_addr = ('localhost', 9999)
 sock = socket.socket()
 
 # Helper functions
-def sendMessage(sock, command, data=''): # composes & sends messages
+'''def sendMessage(sock, command, data=''): # composes & sends messages
         data_to_encode = (command, data)
         data_to_send = json.dumps(data_to_encode)
         sock.send(data_to_send.encode())
@@ -24,7 +25,7 @@ def sendMessage(sock, command, data=''): # composes & sends messages
 def recvMessage(sock): # recives and decomposes messages
     data_to_decode = sock.recv(1024).decode()
     command, data = json.loads(data_to_decode)
-    return command, data
+    return command, data'''
 
 def listQueue(queue, queue_name):
     print('%s:' % queue_name)
@@ -129,11 +130,12 @@ def callComms(sock, args): # translates parsed args into network commands
 def addJob(sock, command, data): # tells server to add job
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command , recv_data = recvMessage(sock)
+    command , recv_data = trans.recvMessage()
     if recv_data == 0:
         print('Jobs added sucsessfully.')
     else:
@@ -144,11 +146,12 @@ def addJob(sock, command, data): # tells server to add job
 def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     try:                             # stdout
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command , recv_data = recvMessage(sock)
+    command , recv_data = trans.recvMessage()
     jobsFound = False
     
     if len(recv_data[3]) > 0:
@@ -177,11 +180,12 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
 def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command, recv_data = recvMessage(sock)
+    command, recv_data = trans.recvMessage()
     ID = recv_data[0]
     name = recv_data[1]
     command = recv_data[2]
@@ -203,11 +207,12 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
 def removeJob(sock, command, data): # tells server to remove job
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    recv_data = recvMessage(sock)
+    recv_data = trans.recvMessage()
     if recv_data == 0:
         print('Job removed sucsessfully.')
     elif recv_data == -1:
@@ -216,7 +221,8 @@ def removeJob(sock, command, data): # tells server to remove job
 def shutdown(sock, command, data): # tells server to shutdown
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
