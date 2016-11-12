@@ -68,8 +68,6 @@ class dataServerProtocol(asyncio.Protocol):
     def data_received(self, data):
         conn = protocol.Server(self.transport, data)
         command, cmd_data = conn.recvMessage()
-        #root_logger.debug('Data received: {!r}'.format(message))
-        #command, cmd_data = json.loads(message)
         root_logger.debug('command %s', command)
         root_logger.debug('cmd_data %s', cmd_data)
         if command == 'addJob': #adds jobs to queue
@@ -140,8 +138,10 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
         self.interval = interval
         self._loop = asyncio.get_event_loop()
         self._set()
+
     def _set(self):
         self._handler = self._loop.call_later(self.interval, self._run)
+
     def _run(self):
         funcOut = self.func()
         self._set()

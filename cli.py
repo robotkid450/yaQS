@@ -19,16 +19,6 @@ server_addr = ('localhost', PORT)
 sock = socket.socket()
 
 # Helper functions
-'''def sendMessage(sock, command, data=''): # composes & sends messages
-        data_to_encode = (command, data)
-        data_to_send = json.dumps(data_to_encode)
-        sock.send(data_to_send.encode())
-
-def recvMessage(sock): # recives and decomposes messages
-    data_to_decode = sock.recv(1024).decode()
-    command, data = json.loads(data_to_decode)
-    return command, data'''
-
 def listQueue(queue, queue_name):
     print('%s:' % queue_name)
     print('ID       | Name')
@@ -96,7 +86,6 @@ def getArgs(): # parses command line arguments + commands
     return args
 
 def callComms(sock, args): # translates parsed args into network commands
-    # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
         data = [args.name, args.shell_command, args.priortiy]
@@ -123,8 +112,10 @@ def callComms(sock, args): # translates parsed args into network commands
         data = ''
         shutdown(sock, command, data)
 
+    # template for additional arguments
     # elif args.command ==  or args.command == :
         # pass
+
     else:
         return -9
     return 0

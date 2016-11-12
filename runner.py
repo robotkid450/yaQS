@@ -15,16 +15,6 @@ tcpAddr = None
 
 debug = True
 
-'''def sendMessage(sock, command, data=''): # composes & sends messages
-    data_to_encode = (command, data)
-    data_to_send = json.dumps(data_to_encode)
-    sock.send(data_to_send.encode())
-
-def recvMessage(sock): # recives and decomposes messages
-    data_to_decode = sock.recv(4096).decode()
-    command, data = json.loads(data_to_decode)
-    return command, data'''
-
 def getJob(): # connectes and retrives a job from to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
@@ -75,8 +65,6 @@ def submitJobComplete(job_ID, job_result): # reports completed jobs to server
     sock.connect(tcpAddr)
     conn = protocol.Client(sock)
     conn.sendMessage('submitJobComplete', [job_ID, job_result])
-    #reply = recvMessage()
-    #print(reply)
 
 class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
 
@@ -93,7 +81,6 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
         #recives work avalible broadcast & acts accordingly
         elif data == 'work Available' and tcpAddr != None:
             job = getJob()
-            #print('job=',job)
             if job != None:
                 job_ID, job_name, job_command, job_working_directory = job
                 result = runJob(job_name, job_command, job_working_directory)
@@ -107,7 +94,7 @@ def configureLogging():
     # Set up logging
     root_logger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
-    file_log_output = logging.FileHandler('server.log')
+    #file_log_output = logging.FileHandler('server.log')
 
     if debug == True:
         root_logger.setLevel(logging.DEBUG)
