@@ -8,10 +8,12 @@ import sys
 import yaqs.protocol as protocol
 # Define needed global variables
 
+PORT = 9999
+
 server_addr = None
 # example
-# server_addr = ('192.168.1.x', 9999)
-server_addr = ('localhost', 9999)
+# server_addr = ('192.168.1.x', PORT)
+server_addr = ('localhost', PORT)
 
 # Define socket
 sock = socket.socket()
@@ -153,7 +155,7 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
         return -1
     command , recv_data = trans.recvMessage()
     jobsFound = False
-    
+
     if len(recv_data[3]) > 0:
         jobsFound = True
         listQueue(recv_data[3], 'Running')
@@ -169,7 +171,7 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     if len(recv_data[2]) > 0:
         jobsFound = True
         listQueue(recv_data[2], 'Low priority')
-    
+
     if len(recv_data[4]) > 0:
         jobsFound = True
         listQueue(recv_data[4], 'Finished')
@@ -196,10 +198,10 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     print('Name:  ' , name)
 
     print('Command:  ' , command)
-    
+
     if working_directory != None:
         print('working Directory:' , working_directory)
-    
+
     if result != None:
         print('result :' , result)
 

@@ -14,9 +14,11 @@ import logging
 # debug = True
 debug = False
 
-server_addr = ('0.0.0.0', 9999) # production
+PORT = 9999
 
-broadcast_addr = ('255.255.255.255', 9999) # production
+server_addr = ('0.0.0.0', PORT) # production
+
+broadcast_addr = ('255.255.255.255', PORT) # production
 
 discovery_intreval = 10   # time in seconds between discovery broadcasrs
 work_dispatch_intreval = 1 # time in seconds between workDispatch broadcasts

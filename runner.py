@@ -8,7 +8,9 @@ import subprocess
 import logging
 import os
 
-udpAddr = ('0.0.0.0', 9999)
+
+PORT = 9999
+udpAddr = ('0.0.0.0', PORT)
 tcpAddr = None
 
 debug = True
