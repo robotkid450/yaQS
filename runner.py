@@ -78,6 +78,13 @@ def submitJobComplete(job_ID, job_result): # reports completed jobs to server
 
 class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
 
+    stopped = False
+
+    def serve_Forever(self):
+        while not self.stopped:
+            self.handle_request()
+
+
     def handle(self): # recives & processes all broadcasts
         data = self.request[0].decode()
         sock = self.request[1]
@@ -100,6 +107,10 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             else:
                 pass
 
+        elif data == 'shutdown':
+            print('stoping')
+            sock.close()
+            self.stopped = True
 
 def configureLogging():
     # Set up logging

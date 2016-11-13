@@ -38,6 +38,11 @@ class UDPBroadcaster(object): # UDP broadcaster class
         root_logger.debug('Sending work avalible.')
         self._stop()
 
+    def sendShutdown(self): # sends work avalible broadcast
+        self.sock.sendto('shutdown'.encode(), broadcast_addr)
+        root_logger.debug('Sending shutdown.')
+        self._stop()
+
     def _stop(self): # stops broadcast repeat loop
         self.sock.close()
 
@@ -129,6 +134,8 @@ class dataServerProtocol(asyncio.Protocol):
 
     # helper functions
     def quitter(self): # helper funcyion for shutdown command
+        UDP_broadcaster = UDPBroadcaster()
+        UDP_broadcaster.sendShutdown()
         loop.stop()
 
 
