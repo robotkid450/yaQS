@@ -84,7 +84,6 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
         while not self.stopped:
             self.handle_request()
 
-
     def handle(self): # recives & processes all broadcasts
         data = self.request[0].decode()
         sock = self.request[1]
@@ -140,4 +139,7 @@ if __name__ == "__main__":
     root_logger.info('test')
 
     # starts runner
-    server.serve_forever()
+    try:
+        server.serve_forever()
+    except ValueError:
+        print('shutdown')
