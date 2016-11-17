@@ -2,3 +2,5 @@ __pycache__
 *.log
 bashSetup
 *.swp
+file.txt
+cli-urwid.py
