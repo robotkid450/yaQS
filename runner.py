@@ -68,6 +68,12 @@ def submitJobComplete(job_ID, job_result): # reports completed jobs to server
 
 class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
 
+    stopped = False
+
+    def serve_Forever(self):
+        while not self.stopped:
+            self.handle_request()
+
     def handle(self): # recives & processes all broadcasts
         data = self.request[0].decode()
         sock = self.request[1]
@@ -89,12 +95,16 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             else:
                 pass
 
+        elif data == 'shutdown':
+            print('stoping')
+            sock.close()
+            self.stopped = True
 
 def configureLogging():
     # Set up logging
     root_logger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
-    #file_log_output = logging.FileHandler('server.log')
+    file_log_output = logging.FileHandler('server.log')
 
     if debug == True:
         root_logger.setLevel(logging.DEBUG)
@@ -118,4 +128,7 @@ if __name__ == "__main__":
     root_logger.info('test')
 
     # starts runner
-    server.serve_forever()
+    try:
+        server.serve_forever()
+    except ValueError:
+        print('shutdown')
