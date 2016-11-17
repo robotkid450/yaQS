@@ -104,7 +104,7 @@ def configureLogging():
     # Set up logging
     root_logger = logging.getLogger(__name__)
     # consoleLogStream = logging.StreamHandler()
-    #file_log_output = logging.FileHandler('server.log')
+    file_log_output = logging.FileHandler('server.log')
 
     if debug == True:
         root_logger.setLevel(logging.DEBUG)
