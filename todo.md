@@ -23,6 +23,7 @@
   * Add arg to run under a different port.
   * Add debug option.
   * Add command output (real-time and post completion).
+  ..* Post completion finished
   * Add multi-user capability.
   * Move to deamon.
 
