@@ -179,6 +179,16 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
         print('ERROR: Broken Pipe, Check network connection')
         return -1
     command, recv_data = trans.recvMessage()
+    
+    if recv_data == -1:
+        print("Job not Found")
+        return
+    elif (recv_data == -2):
+        print("More than one existes with that name")
+        return
+    else:
+        pass
+    
     ID = recv_data[0]
     name = recv_data[1]
     command = recv_data[2]

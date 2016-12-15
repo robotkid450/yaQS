@@ -42,14 +42,27 @@ class QueueData(object): # base object of queue managment
 
 
     def getJobInfo(self, jobID):    # Retrives a jobs info
+                                    # Return codes -1 = not found, -2, duplicate found
+        job_to_return = -1
+        foundJob = False
         for item in self.queues:
             for item in item:
                 if item.id == jobID:
-                    return item.getInfo()
+                    return  item.getInfo()
                 else:
                     pass
-        else:
-            return -1
+
+        for item in self.queues:    # if not found by id search by name
+            for item in item:
+                if item.name == jobID:
+                    if foundJob  == False:
+                        job_to_return = item.getInfo()
+                        foundJob = True
+                    else:
+                        return -2
+                else:
+                    pass
+        return job_to_return
 
     def getAllJobs(self):   #Gets all job names + IDs
         jobs = []
