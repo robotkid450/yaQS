@@ -57,10 +57,8 @@ def runJob(name, command, working_directory=os.getcwd()): # runs the retrived jo
         try:
             result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
         except:
-            result = -1 
+            result = -1
     return result.decode('utf-8')
-
-
 
 def submitJobComplete(job_ID, job_result): # reports completed jobs to server
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
