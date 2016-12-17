@@ -16,6 +16,7 @@ tcpAddr = None
 debug = True
 
 def getJob(): # connectes and retrives a job from to server
+    root_logger.info("Requesting job.")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
     root_logger.info('Connection established')
@@ -32,39 +33,50 @@ def getJob(): # connectes and retrives a job from to server
         sock.close()
         return job_ID, job_name, job_command, job_working_directory
     else:
+        root_logger.info("No jobs avalible.")
         return None
 
 def runJob(name, command, working_directory=os.getcwd()): # runs the retrived job
-    print('running: ', name)
+    root_logger.info('Running job : %s', name)
     original_working_directory=os.getcwd()
     if working_directory != None:
-        print(working_directory)
+        root_logger.debug('Attempting to change to directory : %s', working_directory)
         try:
             os.chdir(working_directory)
 
         except:
-            result = -9
+            root_logger.error('Could not change to %s.', working_directory)
+            return -9
+
         else:
             try :
                 result = subprocess.check_output(command, shell=True)
-                print(result)
+                root_logger.debug("Command result: %s", result)
+
             except:
-                result = -8
+                root_logger.error("ERROR executing job %s", name)
+                return -8
 
         finally:
+            root_logger.debug("Returning to %s", original_working_directory)
             os.chdir(original_working_directory)
 
     else:
         try:
             result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+            root_logger.debug("Command result: %s", result)
+
         except:
+            root_logger.error("ERROR executing job %s", name)
             return -1
-            
+
     return result.decode('utf-8')
 
-def submitJobComplete(job_ID, job_result): # reports completed jobs to server
+def submitJobComplete(job_ID, job_name, job_result): # reports completed jobs to server
+    root_logger.info("Submitting %s as completed.", job_name)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
+    root_logger.info('Connection established')
     conn = protocol.Client(sock)
     conn.sendMessage('submitJobComplete', [job_ID, job_result])
 
@@ -95,13 +107,13 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             if job != None:
                 job_ID, job_name, job_command, job_working_directory = job
                 result = runJob(job_name, job_command, job_working_directory)
-                print(result)
-                submitJobComplete(job_ID, result)
+                submitJobComplete(job_ID, job_name, result)
+
             else:
                 pass
 
         elif data == 'shutdown':
-            print('stoping')
+            root_logger.info("Shutting down.")
             sock.close()
             self.stopped = True
 
