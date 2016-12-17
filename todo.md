@@ -11,6 +11,7 @@
   * Add debug option.
   * Add multi server support.
   * Add find by job name.
+    * Currently job info only 
 
 ### Server
   * Add arg to run under a different port.
