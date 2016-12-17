@@ -20,7 +20,6 @@ server_addr = ('0.0.0.0', PORT) # production
 
 broadcast_addr = ('255.255.255.255', PORT) # production
 
-discovery_intreval = 10   # time in seconds between discovery broadcasrs
 work_dispatch_intreval = 1 # time in seconds between workDispatch broadcasts
 
 class UDPBroadcaster(object): # UDP broadcaster class
@@ -29,11 +28,6 @@ class UDPBroadcaster(object): # UDP broadcaster class
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
-    def sendDiscovery(self): # sends discovery broadcast
-        self.sock.sendto('discover'.encode(), broadcast_addr)
-        logging.debug('Sending Discovery packet.')
-        self._stop()
 
     def sendWorkAvailable(self): # sends work avalible broadcast
         self.sock.sendto('work Available'.encode(), broadcast_addr)
@@ -53,11 +47,6 @@ def workDispatch(): # helper function for workDispatch broadcast
         root_logger.debug('Work Avalibe')
         UDP_broadcaster = UDPBroadcaster()
         UDP_broadcaster.sendWorkAvailable()
-    return 0
-
-def discovery(): # helper function for discovery broadcast
-    UDP_broadcaster = UDPBroadcaster()
-    UDP_broadcaster.sendDiscovery()
     return 0
 
 
@@ -161,7 +150,7 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
 def configureLogging():
     # Set up logging
     root_logger = logging.getLogger(__name__)
-    # consoleLogStream = logging.StreamHandler()
+    consoleLogStream = logging.StreamHandler()
     file_log_output = logging.FileHandler('logs/server.log')
 
     if debug == True:
@@ -171,10 +160,10 @@ def configureLogging():
 
     logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # consoleLogStream.setFormatter(logging_formatter)
+    consoleLogStream.setFormatter(logging_formatter)
     file_log_output.setFormatter(logging_formatter)
 
-    # root_logger.addHandler(consoleLogStream)
+    root_logger.addHandler(consoleLogStream)
     root_logger.addHandler(file_log_output)
 
     return root_logger
@@ -196,9 +185,6 @@ if __name__ == '__main__':
     data_server = loop.run_until_complete(data_server_coroutine)
     # Create and run broadcasts
     dispatch_server = PeriodicTask(workDispatch, work_dispatch_intreval)
-    discover_server = PeriodicTask(discovery, discovery_intreval)
-    # Send initial discovery broadcast
-    discovery()
 
     # Serve requests until Ctrl+C is pressed
     root_logger.info('Serving on {}'.format(data_server.sockets[0].getsockname()))
