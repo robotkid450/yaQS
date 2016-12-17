@@ -5,8 +5,6 @@ __version__ = '2.3.2'
 import asyncio
 import yaqs.queue as yaqsQueue
 import yaqs.protocol as protocol
-#import json
-import sys
 import socket
 import logging
 
