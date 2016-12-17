@@ -16,12 +16,14 @@ tcpAddr = None
 debug = True
 
 def getJob(): # connectes and retrives a job from to server
+    root_logger.info("Requesting job.")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
+    root_logger.info('Connection established')
     conn = protocol.Client(sock)
     conn.sendMessage('getJobToRun')
     command, data = conn.recvMessage()
-    #print('data = ', data)
+    root_logger.debug('Recived message: command: %s data: %s', command, data)
     if data != -1:
         recv_data = data
         job_ID = recv_data[0]
@@ -31,40 +33,50 @@ def getJob(): # connectes and retrives a job from to server
         sock.close()
         return job_ID, job_name, job_command, job_working_directory
     else:
+        root_logger.info("No jobs avalible.")
         return None
 
 def runJob(name, command, working_directory=os.getcwd()): # runs the retrived job
-    print('running: ', name)
+    root_logger.info('Running job : %s', name)
     original_working_directory=os.getcwd()
     if working_directory != None:
-        print(working_directory)
+        root_logger.debug('Attempting to change to directory : %s', working_directory)
         try:
             os.chdir(working_directory)
 
         except:
-            result = -9
+            root_logger.error('Could not change to %s.', working_directory)
+            return -9
+
         else:
             try :
                 result = subprocess.check_output(command, shell=True)
-                print(result)
+                root_logger.debug("Command result: %s", result)
+
             except:
-                result = -8
+                root_logger.error("ERROR executing job %s", name)
+                return -8
 
         finally:
+            root_logger.debug("Returning to %s", original_working_directory)
             os.chdir(original_working_directory)
 
     else:
         try:
             result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+            root_logger.debug("Command result: %s", result)
+
         except:
-            result = -1 
+            root_logger.error("ERROR executing job %s", name)
+            return -1
+
     return result.decode('utf-8')
 
-
-
-def submitJobComplete(job_ID, job_result): # reports completed jobs to server
+def submitJobComplete(job_ID, job_name, job_result): # reports completed jobs to server
+    root_logger.info("Submitting %s as completed.", job_name)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(tcpAddr)
+    root_logger.info('Connection established')
     conn = protocol.Client(sock)
     conn.sendMessage('submitJobComplete', [job_ID, job_result])
 
@@ -85,27 +97,30 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
         if data == 'discover':
             global tcpAddr
             tcpAddr = (self.client_address[0], PORT)
+            root_logger.info('Master server found.')
+            root_logger.debug('Master server address: %s', str(tcpAddr))
 
         #recives work avalible broadcast & acts accordingly
         elif data == 'work Available' and tcpAddr != None:
+            root_logger.info('Work Avalible')
             job = getJob()
             if job != None:
                 job_ID, job_name, job_command, job_working_directory = job
                 result = runJob(job_name, job_command, job_working_directory)
-                print(result)
-                submitJobComplete(job_ID, result)
+                submitJobComplete(job_ID, job_name, result)
+
             else:
                 pass
 
         elif data == 'shutdown':
-            print('stoping')
+            root_logger.info("Shutting down.")
             sock.close()
             self.stopped = True
 
 def configureLogging():
     # Set up logging
     root_logger = logging.getLogger(__name__)
-    # consoleLogStream = logging.StreamHandler()
+    consoleLogStream = logging.StreamHandler()
     file_log_output = logging.FileHandler('logs/runner.log')
 
     if debug == True:
@@ -113,12 +128,12 @@ def configureLogging():
     else:
         root_logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # consoleLogStream.setFormatter(formatter)
-    file_log_output.setFormatter(formatter)
+    consoleLogStream.setFormatter(logging_formatter)
+    file_log_output.setFormatter(logging_formatter)
 
-    # root_logger.addHandler(consoleLogStream)
+    root_logger.addHandler(consoleLogStream)
     root_logger.addHandler(file_log_output)
 
     return root_logger
@@ -127,7 +142,7 @@ if __name__ == "__main__":
     # Creates broadcast reciver
     server = socketserver.UDPServer(udpAddr, UDPhandler)
     root_logger = configureLogging()
-    root_logger.info('test')
+    root_logger.debug('Debug logging test entry.')
 
     # starts runner
     try:
