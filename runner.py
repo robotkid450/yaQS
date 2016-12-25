@@ -104,12 +104,10 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
         elif data == 'work Available':
             root_logger.info('Work Avalible')
             if tcpAddr == None:
-                # global tcpAddr
+                global tcpAddr
                 tcpAddr = (self.client_address[0], PORT)
                 root_logger.info('Master server found.')
                 root_logger.debug('Master server address: %s', str(tcpAddr))
-            else:
-                pass
 
             job = getJob()
             if job != None:
