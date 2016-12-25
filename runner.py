@@ -86,16 +86,8 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
         data = self.request[0].decode()
         sock = self.request[1]
 
-        '''discovers and sets data server address must be run or
-         manually set before jobs can be processed'''
-        if data == 'discover':
-            global tcpAddr
-            tcpAddr = (self.client_address[0], PORT)
-            root_logger.info('Master server found.')
-            root_logger.debug('Master server address: %s', str(tcpAddr))
-
-        #recives work avalible broadcast & acts accordingly
-        elif data == 'work Available':
+        # recives work Avalible broacast and requests a job from queue
+        if data == 'work Available':
             root_logger.info('Work Avalible')
             if tcpAddr == None:
                 global tcpAddr
