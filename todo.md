@@ -10,19 +10,23 @@
   * Add arg to run under a different port.
   * Add debug option.
   * Add multi server support.
+  * Add find by job name.
+    * Currently job info only 
 
 ### Server
   * Add arg to run under a different port.
   * Add debug option.
   * Move to deamon.
+  * Add find job by name.
 
 
 ### Runner
   * Add arg to run under a different port.
   * Add debug option.
-  * Add working directory option.
   * Add command output (real-time and post completion).
+  ..* Post completion finished
   * Add multi-user capability.
+  * Move to deamon.
 
 ## Completed
 

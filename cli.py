@@ -1,31 +1,13 @@
 #!/usr/bin/env python3
 
-__version__ = '2.2.2'
+__version__ = '2.4.0'
 import socket
-import json
+#import json
 import argparse
 import sys
-# Define needed global variables
-
-server_addr = None
-# example
-# server_addr = ('192.168.1.x', 9999)
-server_addr = ('localhost', 9999)
-
-# Define socket
-sock = socket.socket()
+import yaqs.protocol as protocol
 
 # Helper functions
-def sendMessage(sock, command, data=''): # composes & sends messages
-        data_to_encode = (command, data)
-        data_to_send = json.dumps(data_to_encode)
-        sock.send(data_to_send.encode())
-
-def recvMessage(sock): # recives and decomposes messages
-    data_to_decode = sock.recv(1024).decode()
-    command, data = json.loads(data_to_decode)
-    return command, data
-
 def listQueue(queue, queue_name):
     print('%s:' % queue_name)
     print('ID       | Name')
@@ -39,6 +21,13 @@ def getArgs(): # parses command line arguments + commands
     argParse = argparse.ArgumentParser(
         description='Interface with yaQS server.'
         )
+
+    argParse.add_argument('-H', dest='host', type=str, nargs=1,
+        default=['localhost:9999'],
+        help="Addres of the server with port.")
+
+    # argParse.add_argument('-d', dest='debug', action='store_const', const='True',
+        # default='False', help='Enable debug mode.')
 
     commandsParsers = argParse.add_subparsers(help='commands', dest='command')
 
@@ -93,7 +82,6 @@ def getArgs(): # parses command line arguments + commands
     return args
 
 def callComms(sock, args): # translates parsed args into network commands
-    # print(args.command)
     if args.command == 'add-job' or args.command == 'add':
         command = 'addJob'
         data = [args.name, args.shell_command, args.priortiy]
@@ -120,8 +108,10 @@ def callComms(sock, args): # translates parsed args into network commands
         data = ''
         shutdown(sock, command, data)
 
+    # template for additional arguments
     # elif args.command ==  or args.command == :
         # pass
+
     else:
         return -9
     return 0
@@ -129,11 +119,12 @@ def callComms(sock, args): # translates parsed args into network commands
 def addJob(sock, command, data): # tells server to add job
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command , recv_data = recvMessage(sock)
+    command , recv_data = trans.recvMessage()
     if recv_data == 0:
         print('Jobs added sucsessfully.')
     else:
@@ -144,12 +135,18 @@ def addJob(sock, command, data): # tells server to add job
 def getAllJobs(sock, command, data): # gets all jobs from server & prints to
     try:                             # stdout
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command , recv_data = recvMessage(sock)
+    command , recv_data = trans.recvMessage()
     jobsFound = False
+
+    if len(recv_data[3]) > 0:
+        jobsFound = True
+        listQueue(recv_data[3], 'Running')
+
     if len(recv_data[0]) > 0:
         jobsFound = True
         listQueue(recv_data[0], 'High priority')
@@ -162,9 +159,9 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
         jobsFound = True
         listQueue(recv_data[2], 'Low priority')
 
-    if len(recv_data[3]) > 0:
+    if len(recv_data[4]) > 0:
         jobsFound = True
-        listQueue(recv_data[3], 'Running')
+        listQueue(recv_data[4], 'Finished')
 
     if not jobsFound:
         print('No jobs currently queued or running.')
@@ -172,28 +169,48 @@ def getAllJobs(sock, command, data): # gets all jobs from server & prints to
 def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    command, recv_data = recvMessage(sock)
+    command, recv_data = trans.recvMessage()
+
+    if recv_data == -1:
+        print("Job not Found.")
+        return
+    elif (recv_data == -2):
+        print("More than one job existes with that name.")
+        return
+    else:
+        pass
+
     ID = recv_data[0]
     name = recv_data[1]
     command = recv_data[2]
     working_directory = recv_data[3]
-    print('ID:  ' + ID)
-    print('Name:  ' + name)
-    print('Command:  ' + command)
-    print('working Directory:' + working_directory)
+    result = recv_data[4]
+    print('ID:  ' , ID)
+
+    print('Name:  ' , name)
+
+    print('Command:  ' , command)
+
+    if working_directory != None:
+        print('working Directory:' , working_directory)
+
+    if result != None:
+        print('result :' , result)
 
 def removeJob(sock, command, data): # tells server to remove job
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
-    recv_data = recvMessage(sock)
+    recv_data = trans.recvMessage()
     if recv_data == 0:
         print('Job removed sucsessfully.')
     elif recv_data == -1:
@@ -202,15 +219,20 @@ def removeJob(sock, command, data): # tells server to remove job
 def shutdown(sock, command, data): # tells server to shutdown
     try:
         sock.connect(server_addr)
-        sendMessage(sock, command, data)
+        trans = protocol.Client(sock)
+        trans.sendMessage(command, data)
     except BrokenPipeError:
         print('ERROR: Broken Pipe, Check network connection')
         return -1
 
 if __name__ == '__main__':
-    if server_addr == None:
-        print('''Please edit this file and set proper server address in server_adder variable.''')
-        sys.exit(-2)
-    else:
-        args = getArgs() # calls argparser
-        result = callComms(sock, args) # sends command to server
+    args = getArgs() # calls argparser
+    # Define needed global variables
+
+    server_addr = tuple(args.host[0].split(':'))
+    server_addr = (server_addr[0], int(server_addr[1]))
+
+    # Define socket
+    sock = socket.socket()
+
+    result = callComms(sock, args) # sends command to server
