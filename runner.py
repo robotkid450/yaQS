@@ -3,17 +3,11 @@
 __version__ = '2.3.2'
 import socketserver, socket
 import yaqs.protocol as protocol
-#import json
+import argparse
 import subprocess
 import logging
 import os
 
-
-PORT = 9999
-udpAddr = ('0.0.0.0', PORT)
-tcpAddr = None
-
-debug = True
 
 def getJob(): # connectes and retrives a job from to server
     root_logger.info("Requesting job.")
@@ -96,7 +90,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
          manually set before jobs can be processed'''
         if data == 'discover':
             global tcpAddr
-            tcpAddr = (self.client_address[0], PORT)
+            tcpAddr = (self.client_address[0], udpAddr[1])
             root_logger.info('Master server found.')
             root_logger.debug('Master server address: %s', str(tcpAddr))
 
@@ -105,7 +99,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             root_logger.info('Work Avalible')
             if tcpAddr == None:
                 global tcpAddr
-                tcpAddr = (self.client_address[0], PORT)
+                tcpAddr = (self.client_address[0], udpAddr[1])
                 root_logger.info('Master server found.')
                 root_logger.debug('Master server address: %s', str(tcpAddr))
 
@@ -123,18 +117,20 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             sock.close()
             self.stopped = True
 
-def configureLogging():
+def configureLogging(debugMode):
     # Set up logging
     root_logger = logging.getLogger(__name__)
     consoleLogStream = logging.StreamHandler()
     file_log_output = logging.FileHandler('logs/runner.log')
 
-    if debug == True:
+    if debugMode == 'True':
         root_logger.setLevel(logging.DEBUG)
     else:
         root_logger.setLevel(logging.INFO)
 
-    logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
 
     consoleLogStream.setFormatter(logging_formatter)
     file_log_output.setFormatter(logging_formatter)
@@ -144,10 +140,29 @@ def configureLogging():
 
     return root_logger
 
+def getArgs():
+    argParse = argparse.ArgumentParser(
+        description='Run yaQS jobs.'
+        )
+
+    argParse.add_argument('-p', dest='port', type=int, nargs=1, default=9999,
+        help="Port that the runner will use to communicate with the server.")
+
+    argParse.add_argument('-d', dest='debug', action='store_const', const='True',
+        default='False', help='Enable debug mode.')
+
+    args = argParse.parse_args()
+    return args
+
 if __name__ == "__main__":
     # Creates broadcast reciver
+    args = getArgs()
+
+    udpAddr = ("0.0.0.0", args.port[0])
+    tcpAddr = None
+    
     server = socketserver.UDPServer(udpAddr, UDPhandler)
-    root_logger = configureLogging()
+    root_logger = configureLogging(args.debug)
     root_logger.debug('Debug logging test entry.')
 
     # starts runner
