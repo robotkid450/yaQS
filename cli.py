@@ -6,17 +6,6 @@ import socket
 import argparse
 import sys
 import yaqs.protocol as protocol
-# Define needed global variables
-
-PORT = 9999
-
-server_addr = None
-# example
-# server_addr = ('192.168.1.x', PORT)
-server_addr = ('localhost', PORT)
-
-# Define socket
-sock = socket.socket()
 
 # Helper functions
 def listQueue(queue, queue_name):
@@ -32,6 +21,13 @@ def getArgs(): # parses command line arguments + commands
     argParse = argparse.ArgumentParser(
         description='Interface with yaQS server.'
         )
+
+    argParse.add_argument('-H', dest='host', type=str, nargs=1,
+        default=['localhost:9999'],
+        help="Addres of the server with port.")
+
+    # argParse.add_argument('-d', dest='debug', action='store_const', const='True',
+        # default='False', help='Enable debug mode.')
 
     commandsParsers = argParse.add_subparsers(help='commands', dest='command')
 
@@ -206,7 +202,6 @@ def getJobInfo(sock, command, data): # get specific job info & prints to stdout
     if result != None:
         print('result :' , result)
 
-
 def removeJob(sock, command, data): # tells server to remove job
     try:
         sock.connect(server_addr)
@@ -231,9 +226,13 @@ def shutdown(sock, command, data): # tells server to shutdown
         return -1
 
 if __name__ == '__main__':
-    if server_addr == None:
-        print('''Please edit this file and set proper server address in server_adder variable.''')
-        sys.exit(-2)
-    else:
-        args = getArgs() # calls argparser
-        result = callComms(sock, args) # sends command to server
+    args = getArgs() # calls argparser
+    # Define needed global variables
+
+    server_addr = tuple(args.host[0].split(':'))
+    server_addr = (server_addr[0], int(server_addr[1]))
+
+    # Define socket
+    sock = socket.socket()
+
+    result = callComms(sock, args) # sends command to server
