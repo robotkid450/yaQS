@@ -2,27 +2,20 @@
 
 ## In progress
 
-### All
-  * Move to logging.
-
 ### CLI
   * Move to OO class.
-  * Add arg to run under a different port.
-  * Add debug option.
-  * Add multi server support.
+
 
 ### Server
-  * Add arg to run under a different port.
-  * Add debug option.
   * Move to deamon.
 
 
+
 ### Runner
-  * Add arg to run under a different port.
-  * Add debug option.
-  * Add working directory option.
   * Add command output (real-time and post completion).
+    * Post completion finished
   * Add multi-user capability.
+  * Move to deamon.
 
 ## Completed
 
@@ -31,13 +24,22 @@
   * Add to show-jobs commands.
   * Add to job-info.
   * Add working directory option.
+  * Add arg to run under a different port.
+  * Add debug option.
+  * Add multi server support.
+  * Add find by job name.
+
 
 ### Server
   * Remove completed bit.
   * Add currently running list.
   * Add working directory option.
+  * Add arg to run under a different port.
+  * Add debug option.
+  * Add find job by name.
 
 
 ### Runner
-  * Write it.
   * Add working directory option.
+  * Add arg to run under a different port.
+  * Add debug option.
