@@ -175,7 +175,6 @@ def getArgs():
 if __name__ == '__main__':
     # get cli args
     args = getArgs()
-    print(args.port[0])
 
     PORT = args.port[0]
 
@@ -189,6 +188,7 @@ if __name__ == '__main__':
 
     # run configure logging
     root_logger = configureLogging(args.debug)
+    root_logger.debug('Debug Enabled')
 
     # Create storage queue
     queue = yaqsQueue.QueueData()

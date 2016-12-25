@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
     server = socketserver.UDPServer(udpAddr, UDPhandler)
     root_logger = configureLogging(args.debug)
-    root_logger.debug('Debug logging test entry.')
+    root_logger.debug('Debug Enabled')
 
     # starts runner
     try:
