@@ -90,7 +90,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
          manually set before jobs can be processed'''
         if data == 'discover':
             global tcpAddr
-            tcpAddr = (self.client_address[0], udpAddr[1])
+            tcpAddr = (self.client_address[0], PORT)
             root_logger.info('Master server found.')
             root_logger.debug('Master server address: %s', str(tcpAddr))
 
@@ -99,7 +99,7 @@ class UDPhandler(socketserver.BaseRequestHandler): # broadcast reciver
             root_logger.info('Work Avalible')
             if tcpAddr == None:
                 global tcpAddr
-                tcpAddr = (self.client_address[0], udpAddr[1])
+                tcpAddr = (self.client_address[0], PORT)
                 root_logger.info('Master server found.')
                 root_logger.debug('Master server address: %s', str(tcpAddr))
 
@@ -145,7 +145,7 @@ def getArgs():
         description='Run yaQS jobs.'
         )
 
-    argParse.add_argument('-p', dest='port', type=int, nargs=1, default=9999,
+    argParse.add_argument('-p', dest='port', type=int, nargs=1, default=[9999],
         help="Port that the runner will use to communicate with the server.")
 
     argParse.add_argument('-d', dest='debug', action='store_const', const='True',
@@ -158,9 +158,11 @@ if __name__ == "__main__":
     # Creates broadcast reciver
     args = getArgs()
 
-    udpAddr = ("0.0.0.0", args.port[0])
+    PORT = args.port[0]
+
+    udpAddr = ("0.0.0.0", PORT)
     tcpAddr = None
-    
+
     server = socketserver.UDPServer(udpAddr, UDPhandler)
     root_logger = configureLogging(args.debug)
     root_logger.debug('Debug logging test entry.')

@@ -7,18 +7,8 @@ import yaqs.queue as yaqsQueue
 import yaqs.protocol as protocol
 import socket
 import logging
+import argparse
 
-
-# debug = True
-debug = False
-
-PORT = 9999
-
-server_addr = ('0.0.0.0', PORT) # production
-
-broadcast_addr = ('255.255.255.255', PORT) # production
-
-work_dispatch_intreval = 1 # time in seconds between workDispatch broadcasts
 
 class UDPBroadcaster(object): # UDP broadcaster class
     """docstring for UDPBroadcaster"""
@@ -145,13 +135,13 @@ class PeriodicTask(object): # base for tasks that run periodicly ex. broadcasts
         self._handler.cancel()
 
 
-def configureLogging():
+def configureLogging(debug):
     # Set up logging
     root_logger = logging.getLogger(__name__)
     consoleLogStream = logging.StreamHandler()
     file_log_output = logging.FileHandler('logs/server.log')
 
-    if debug == True:
+    if debug == 'True':
         root_logger.setLevel(logging.DEBUG)
     else:
         root_logger.setLevel(logging.INFO)
@@ -166,10 +156,39 @@ def configureLogging():
 
     return root_logger
 
+
+def getArgs():
+    argParse = argparse.ArgumentParser(
+        description='Run yaQS server.'
+        )
+
+    argParse.add_argument('-p', dest='port', type=int, nargs=1, default=[9999],
+        help="Port that server will listen on.")
+
+    argParse.add_argument('-d', dest='debug', action='store_const', const='True',
+        default='False', help='Enable debug mode.')
+
+    args = argParse.parse_args()
+    return args
+
+
 if __name__ == '__main__':
+    # get cli args
+    args = getArgs()
+    print(args.port[0])
+
+    PORT = args.port[0]
+
+    server_addr = ('0.0.0.0', PORT) # production
+
+    broadcast_addr = ('255.255.255.255', PORT) # production
+
+    # time in seconds between workDispatch broadcasts
+    work_dispatch_intreval = 1
+
 
     # run configure logging
-    root_logger = configureLogging()
+    root_logger = configureLogging(args.debug)
 
     # Create storage queue
     queue = yaqsQueue.QueueData()
