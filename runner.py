@@ -113,7 +113,7 @@ def configureLogging(debugMode):
     # Set up logging
     root_logger = logging.getLogger(__name__)
     consoleLogStream = logging.StreamHandler()
-    file_log_output = logging.FileHandler('logs/runner.log')
+    file_log_output = logging.FileHandler('/tmp/yaQSRunner.log')
 
     if debugMode == 'True':
         root_logger.setLevel(logging.DEBUG)
